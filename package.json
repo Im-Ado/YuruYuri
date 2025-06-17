@@ -1,6 +1,6 @@
 {
-"name": "YukiBot-MD",
-"version": "2.2.0",
+"name": "YuruYuriMD",
+"version": "1.1.0",
 "description": "WhatsApp Bot Multi Device",
 "main": "index.js",
 "type": "module",
@@ -18,21 +18,21 @@
 "eslint": "eslint .",
 "eslintfix": "eslint --fix ."
 },
-"homepage": "https://github.com/The-King-Destroy/Yuki_Suou-Bot",
+"homepage": "https://github.com/Im-Ado/YuruYuri",
 "author": {
-"name": "The-King-Destroy"
+"name": "Im-Ado"
 },
 "repository": {
 "type": "git",
-"url": "git+https://github.com/The-King-Destroy/Yuki_Suou-Bot.git"
+"url": "git+https://github.com/Im-Ado/YuruYuri.git"
 },
 "bugs": {
-"url": "https://github.com/The-King-Destroy/Yuki_Suou-Bot/issues"
+"url": "https://github.com/Im-Ado/YuruYuri/issues"
 },
 "license": "MIT-License",
 "dependencies": {
 "@StarlightsTeam/Scraper": "github:Ado926/Starlights-Scraper",
-"@whiskeysockets/baileys": "github:Ado926/MikiBai",
+"@whiskeysockets/baileys": "github:SYA-TEAM/Bai",
 "@adiwajshing/keyed-db": "^0.2.4",
 "@bochilteam/scraper": "^4.2.4",
 "@bochilteam/scraper-sosmed": "^1.0.5",
