@@ -5,10 +5,10 @@
   <img src="https://raw.githubusercontent.com/Ado926/WirksiBoxFiles/main/1750045768967-8mc5f2-menu.jpg" alt="YuruYuri Bot" />
 </p>
 
-### **`❕️ Información importante`**
+### **`✐ Info importante ☁︎`**
 
 <details>
-  <summary><b> ➮ Info • Bot</b></summary>
+  <summary><b> ➡︎ Info de la Bot</b></summary>
 
 * Este proyecto **no está afiliado de ninguna manera** con `WhatsApp`. `WhatsApp` es una marca registrada de `WhatsApp LLC`.  
 * Este bot es un **desarrollo independiente** que **no tiene ninguna relación oficial con la compañía**.
@@ -16,7 +16,7 @@
 </details>
 
 <details>
-  <summary><b> ➮ Funciones</b></summary>
+  <summary><b> ➽ Funciones</b></summary>
 
 > Bot en desarrollo. Si presenta alguna falla, por favor reporta al creador para darle una solución óptima.
 
@@ -38,15 +38,15 @@
 
 ---
 
-### **`✧ Click en la imagen para descargar Termux ✧`**  
+### **`★ Click en la imagen para descargar Termux ❀`**  
 <a href="https://www.mediafire.com/file/llugt4zgj7g3n3u/com.termux_1020.apk/file"><img src="https://qu.ax/finc.jpg" height="125px"></a>
 
-### **`➮ Instalación por Termux`**
+### **`✿ Instalación por Termux Commands =`**
 
 <details>
   <summary><b> ✎ Click para ver los comandos de instalación </b></summary>
 
-### **❀ Instalación manual en Termux**  
+### **`= Commands`**
 > Copia y pega los comandos uno por uno en Termux:
 
 ```bash
@@ -58,3 +58,13 @@ apt update && apt upgrade && pkg install -y git nodejs ffmpeg imagemagick yarn
 ```
 
 ```bash
+git clone https://github.com/Im-Ado/YuruYuri
+```
+
+```bash
+npm install
+```
+
+```bash
+npm start
+```
