@@ -41,13 +41,13 @@ let { say } = cfonts
 
 console.log(chalk.bold.redBright(`\n✰ Iniciando Yuki-Suou-Bot ✰\n`))
 
-say('YukiBot-MD', {
+say('Yuru Yuri 💜', {
 font: 'block',
 align: 'center',
 colors: ['magentaBright']
 })
 
-say(`Developed By • The-King-Destroy`, {
+say(`⭐ Made with wirk ⭐`, {
 font: 'console',
 align: 'center',
 colors: ['blueBright']
@@ -130,7 +130,7 @@ if (methodCodeQR) {
 if (!methodCodeQR && !methodCode && !fs.existsSync(`./${sessions}/creds.json`)) {
   do {
     opcion = await question(
-      colores('⌨ Seleccione una opción:\n') + 
+      colores('✐ Seleccione una opción:\n') + 
       opcionQR('1. Con código QR\n') + 
       opcionTexto('2. Con código de texto de 8 dígitos\n--> ')
     );
@@ -181,7 +181,7 @@ if (!fs.existsSync(`./${sessions}/creds.json`)) {
       } else {
         do {
           phoneNumber = await question(
-            chalk.bgBlack(chalk.bold.greenBright(`✦ Por favor, Ingrese el número de WhatsApp.\n${chalk.bold.yellowBright(`✏  Ejemplo: 57321×××××××`)}\n${chalk.bold.magentaBright('---> ')}`))
+            chalk.bgBlack(chalk.bold.greenBright(`✿ Por favor, Ingrese el número de WhatsApp.\n${chalk.bold.yellowBright(`✏  Ejemplo: 57321×××××××`)}\n${chalk.bold.magentaBright('---> ')}`))
           );
           phoneNumber = phoneNumber.replace(/\D/g, '');
           if (!phoneNumber.startsWith('+')) {
@@ -225,7 +225,7 @@ if (opcion == '1' || methodCodeQR) {
 console.log(chalk.bold.yellow(`\n❐ ESCANEA EL CÓDIGO QR EXPIRA EN 45 SEGUNDOS`))}
 }
 if (connection == 'open') {
-console.log(chalk.bold.green('\n❀ Yuki Suou Conectada con éxito ❀'))
+console.log(chalk.bold.green('\n❑ Yuru MD Conectada con éxito ❀'))
 }
 let reason = new Boom(lastDisconnect?.error)?.output?.statusCode
 if (connection === 'close') {
