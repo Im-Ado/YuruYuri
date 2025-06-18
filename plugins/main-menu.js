@@ -27,13 +27,13 @@ const mundo = `${bandera} ${pais}`;
 𝐇𝐨𝐥𝐚, @${userId.split('@')[0]}! 𝐒𝐨𝐲 *${packname}*
 ᴀǫᴜɪ ᴛɪᴇɴᴇs ʟᴀ ʟɪsᴛᴀ ᴅᴇ ᴄᴏᴍᴀɴᴅᴏs
 ╭┈ ↷
-│➮ *Modo* » Publico
-│✦ *Bot* » ${(conn.user.jid == global.conn.user.jid ? 'Principal 🅥' : 'Sub Bot 🅑')}
-│ⴵ *Activada* » ${uptime}
-│• *Usuarios* » ${totalreg}
-│• *Comandos* » ${totalCommands}
-│• *País* » ${mundo}
-│• *Baileys* » Multi Device
+│ᰔᩚ *Modo* : Público
+│✦ *Bot* : ${(conn.user.jid == global.conn.user.jid ? 'Principal 🅥' : 'Sub Bot 🅑')}
+│ⴵ *Activada* : ${uptime}
+│✧ *Users* : ${totalreg}
+│❀ *Comandos* : ${totalCommands}
+│★ *País* : ${mundo}
+│❐ *Baileys* : Multi Device
 ╰─────────────────
 
 »  ⊹ ˚୨ •(=^●ω●^=)•  *Info-Bot* ⊹
@@ -77,6 +77,8 @@ const mundo = `${bandera} ${pais}`;
 »  ⊹ ˚୨ •(=^●ω●^=)•  *Buscadores* ⊹
 > ✐ Comandos para realizar búsquedas en distintas plataformas.
 
+✦ *#artista*
+→ Buscador de música de tu artista fav. 
 ✦ *#tiktoksearch • #tiktoks*
 → Buscador de videos de tiktok.
 ✦ *#tweetposts*
@@ -115,6 +117,8 @@ const mundo = `${bandera} ${pais}`;
 
 ✦ *#tiktok • #tt*
 → Descarga videos de TikTok.
+✦ *#playtt*
+→ Descarga videos de tiktok por nombre.
 ✦ *#mediafire • #mf*
 → Descargar un archivo de MediaFire.
 ✦ *#pinvid • #pinvideo* + [enlacé]
@@ -123,7 +127,7 @@ const mundo = `${bandera} ${pais}`;
 → Descargar un archivo de MEGA.
 ✦ *#play • #play2 • #playaudio • #playvideo*
 → Descarga música/video de YouTube.
-✦ *#ytmp3 • #ytmp4*
+✦ *#ytmp3 • #ytmp4 • #ytmp4doc* 
 → Descarga música/video de YouTube mediante url.
 ✦ *#fb • #facebook*
 → Descarga videos de Facebook.
@@ -133,8 +137,6 @@ const mundo = `${bandera} ${pais}`;
 → Descarga contenido de Instagram.
 ✦ *#tts • #tiktoks* + [busqueda]
 → Buscar videos de tiktok 
-✦ *#terabox • #tb* + [enlace]
-→ Descargar archivos por Terabox.
 ✦ *#gdrive • #drive* + [enlace]
 → Descargar archivos por Google Drive.
 ✦ *#ttimg • #ttmp3* + <url>
