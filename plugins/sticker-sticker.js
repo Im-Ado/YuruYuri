@@ -61,7 +61,7 @@ let handler = async (m, { conn, args, usedPrefix, command }) => {
               body: `${dev}`,
               mediaType: 2,
               sourceUrl: redes,
-              thumbnail: icono
+              thumbnail: catalogo
             }
           }
         },
