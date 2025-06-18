@@ -46,13 +46,13 @@ global.packname = '✿ ʏᴜʀᴜ ʏᴜʀɪ ✿'
 global.botname = '☔︎︎ ᴛʜᴇ ʏᴜʀᴜ ʏᴜʀɪ | ᴠ1 ☁︎'
 global.wm = "☔︎︎ ᴛʜᴇ ʏᴜʀᴜ ʏᴜʀɪ | ᴠ1 ☁︎";
 global.author = ''
-global.dev = '✐ Made With Wirk And Maycol ☁︎'
+global.dev = '「✐」 Mᥲძᥱ ᑲᥡ 𝘄𝗶𝗿𝗸 ᥲᥒძ 𝗺𝗮𝘆𝗰𝗼𝗹 ✧︎'
 global.textbot = ''
 global.etiqueta = ''
 
 //*─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─⭒─ׄ─ׅ─ׄ─*
 
-global.moneda = 'Chocos'
+global.moneda = 'ᕦ 𝗖𝗵𝗼𝗰𝗼𝘀 ᕤ'
 global.welcom1 = '➮ Edita Con El Comando setwelcome'
 global.welcom2 = '➮ Edita Con El Comando setbye'
 global.banner = 'https://qu.ax/aiSET.jpg'
