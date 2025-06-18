@@ -4,10 +4,10 @@
 import fetch from "node-fetch"
 
 
-// 🔧 Variable global para evitar procesos simultáneos
+
 let isDownloadingArtist = false
 
-// 🧩 Función para descargar un track
+
 async function downloadTrack(youtubeUrl) {
   const encodedUrl = encodeURIComponent(youtubeUrl)
   const primaryAPI = `https://mahiru-shiina.vercel.app/download/ytmp3?url=${encodedUrl}`
