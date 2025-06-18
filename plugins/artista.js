@@ -313,5 +313,5 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
   })
 }
 
-handler.command = /^artista$/i
+handler.command = ['artista']
 export default handler
