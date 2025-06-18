@@ -61,7 +61,7 @@ let handler = async (m, { conn, args, usedPrefix, command }) => {
               body: `${dev}`,
               mediaType: 2,
               sourceUrl: redes,
-              thumbnail: catalogo
+              thumbnail: `https://raw.githubusercontent.com/Ado926/WirksiBoxFiles/main/1750206519654-89rz1t-1750206495797-dc9a9a.jpg`
             }
           }
         },
