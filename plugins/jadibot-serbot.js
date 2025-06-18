@@ -30,7 +30,7 @@ let crm3 = "SBpbmZvLWRvbmFyLmpz"
 let crm4 = "IF9hdXRvcmVzcG9uZGVyLmpzIGluZm8tYm90Lmpz"
 let drm1 = ""
 let drm2 = ""
-let rtx = `《✧》*Conexión Sub-Bot - Modo QR* ❀
+let rtx = `《✧》Conexión Sub-Bot - Modo QR ❀
 
 > ✿ Escanea este código QR desde otro dispositivo
 > para convertirte en un *Sub-Bot Temporal*.
@@ -41,9 +41,9 @@ let rtx = `《✧》*Conexión Sub-Bot - Modo QR* ❀
 
 ✧ Este código expira en *45 segundos* ⏳`
 
-let rtx2 = `《✧》*Conexión Sub-Bot - Modo Código* ❀
+let rtx2 = `《✧》Conexión Sub-Bot - Modo Código ❀
 
-> ✿ Usa este *código numérico* para iniciar sesión como *Sub-Bot Temporal*
+> ✿ Usa este *código* para iniciar sesión como *Sub-Bot Temporal*
 
 ➊ Toca los *tres puntos* arriba a la derecha  
 ➋ Selecciona *Dispositivos vinculados*  
