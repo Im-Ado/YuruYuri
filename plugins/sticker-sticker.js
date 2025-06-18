@@ -58,7 +58,7 @@ let handler = async (m, { conn, args, usedPrefix, command }) => {
             externalAdReply: {
               showAdAttribution: false,
               title: packname,
-              body: `${botname}`,
+              body: `${dev}`,
               mediaType: 2,
               sourceUrl: redes,
               thumbnail: catalogo
