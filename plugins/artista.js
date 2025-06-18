@@ -1,3 +1,6 @@
+// Código hecho por Ado [ Wirk ] 
+// github.com/Im-Ado
+// Deja créditos
 import fetch from "node-fetch"
 
 
