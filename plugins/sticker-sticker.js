@@ -12,8 +12,8 @@ let handler = async (m, { conn, args, usedPrefix, command }) => {
       if (/video/g.test(mime) && (q.msg || q).seconds > 15) {
         return m.reply(`✧ ¡El video no puede durar más de 15 segundos!...`)
       }
-      let img = await q.download?.()
 
+      let img = await q.download?.()
       if (!img) {
         return conn.reply(m.chat, `✿ Por favor, envía una imagen o video para hacer un sticker.`, m, rcanal)
       }
@@ -44,9 +44,29 @@ let handler = async (m, { conn, args, usedPrefix, command }) => {
     }
   } finally {
     if (stiker) {
-      conn.sendFile(m.chat, stiker, 'sticker.webp', '', m, rcanal)
-    } else {
-      return conn.reply(m.chat, `✿ Por favor, envía una imagen o video para hacer un sticker.`, m, rcanal)
+      conn.sendFile(
+        m.chat,
+        stiker,
+        'sticker.webp',
+        ``,
+        m,
+        true,
+        {
+          contextInfo: {
+            forwardingScore: 200,
+            isForwarded: false,
+            externalAdReply: {
+              showAdAttribution: false,
+              title: packname,
+              body: `${botname}`,
+              mediaType: 2,
+              sourceUrl: redes,
+              thumbnail: catalogo
+            }
+          }
+        },
+        { quoted: m }
+      )
     }
   }
 }
