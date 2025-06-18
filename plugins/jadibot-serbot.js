@@ -30,28 +30,27 @@ let crm3 = "SBpbmZvLWRvbmFyLmpz"
 let crm4 = "IF9hdXRvcmVzcG9uZGVyLmpzIGluZm8tYm90Lmpz"
 let drm1 = ""
 let drm2 = ""
-let rtx = "《✧》*Conexión Sub-Bot - Modo QR* ❀
+let rtx = `《✧》*Conexión Sub-Bot - Modo QR* ❀
 
 > ✿ Escanea este código QR desde otro dispositivo
 > para convertirte en un *Sub-Bot Temporal*.
 
-➊ Ve a los *tres puntos* arriba a la derecha
-➋ Toca en *Dispositivos vinculados*
-➌ Escanea el *código QR* que aparece
+➊ Ve a los *tres puntos* arriba a la derecha  
+➋ Toca en *Dispositivos vinculados*  
+➌ Escanea el *código QR* que aparece  
 
 ✧ Este código expira en *45 segundos* ⏳`
 
-
-let rtx2 = "《✧》*Conexión Sub-Bot - Modo Código* ❀
+let rtx2 = `《✧》*Conexión Sub-Bot - Modo Código* ❀
 
 > ✿ Usa este *código numérico* para iniciar sesión como *Sub-Bot Temporal*
 
-➊ Toca los *tres puntos* arriba a la derecha
-➋ Selecciona *Dispositivos vinculados*
-➌ Elige *Vincular con número de teléfono*
-➍ Escribe el *código* que se te proporciona
+➊ Toca los *tres puntos* arriba a la derecha  
+➋ Selecciona *Dispositivos vinculados*  
+➌ Elige *Vincular con número de teléfono*  
+➍ Escribe el *código* que se te proporciona  
 
-⚠ *No se recomienda usar tu cuenta principal*"
+⚠ *No se recomienda usar tu cuenta principal*`
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
