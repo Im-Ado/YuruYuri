@@ -72,15 +72,15 @@ let handler = async (m, { conn: _envio, command, usedPrefix, args, text, isOwner
                 const usersNumbers = users.map(jid => jid.split`@`[0]).join('\n');
 
                 const replyMessage = `
-❀ Para ser un subbot usa el comando *#code*
+✿ Para ser un subbot usa el comando *#code*
 
 ✧ *Sub-Bots conectados: ${users.length}*
 ${usersNumbers}
                 `.trim();
 
                 const responseMessage = isMainBot
-                    ? `*「✦」Subbots activos*\n${replyMessage}`
-                    : `⚠️ *ESTE ES UN SUB-BOT*\n${replyMessage}`;
+                    ? `*「✧」Subbots activos*\n${replyMessage}`
+                    : `⚠ *ESTE ES UN SUB-BOT*\n${replyMessage}`;
 
                 await _envio.sendMessage(m.chat, { text: responseMessage, mentions: _envio.parseMention(responseMessage) }, { quoted: m });
             }
