@@ -52,7 +52,7 @@ let handler = async function (m, { conn, text, usedPrefix, command }) {
 > ❀ ID » *${sn}*
 •━━━━━━◇━━━━━━•
 ❀ 𝗥𝗲𝗰𝗼𝗺𝗽𝗲𝗻𝘀𝗮𝘀:
-> • ⛁ *{moneda}* » +46
+> • ⛁ *${moneda}* » +46
 > • ✰ *Experiencia* » +310
 > • ❖ *Tokens* » +25
 •━━━━━━◇━━━━━━•
@@ -68,14 +68,14 @@ let handler = async function (m, { conn, text, usedPrefix, command }) {
   // Notificación al grupo oficial
   const grupoNotificacion = '120363401533528804@g.us'
   const mensajeNotificacion = `
-✦ 𝗡𝗨𝗘𝗩𝗢 𝗥𝗘𝗚𝗜𝗦𝗧𝗥𝗢 ✦
+「✧」 𝗡𝗨𝗘𝗩𝗢 𝗥𝗘𝗚𝗜𝗦𝗧𝗥𝗢 「✧」
 •━━━━━━◇━━━━━━•
-> ᰔᩚ Nombre » *${name}*
-> ✎ Edad » *${age} años*
+> ♥︎ Nombre » *${name}*
+> ✎ Edad » *${age} añitos*
 > ✦ ID » *${sn}*
 •━━━━━━◇━━━━━━•
 ❀ Recompensas:
-> • ⛁ *{moneda}* » +46
+> • ⛁ *${moneda}* » +46
 > • ✰ *Experiencia* » +310
 > • ❖ *Tokens* » +25
 •━━━━━━◇━━━━━━•
