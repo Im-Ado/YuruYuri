@@ -5,126 +5,163 @@ import axios from 'axios'
 import moment from 'moment-timezone'
 const { generateWAMessageFromContent, prepareWAMessageMedia, proto } = pkg
 
-var handler = m => m
-handler.all = async function (m) {
+var handler = async (m) => {
 
-global.getBuffer = async function getBuffer(url, options) {
-try {
-options ? options : {}
-var res = await axios({
-method: "get",
-url,
-headers: {
-'DNT': 1,
-'User-Agent': 'GoogleBot',
-'Upgrade-Insecure-Request': 1
-},
-...options,
-responseType: 'arraybuffer'
-})
-return res.data
-} catch (e) {
-console.log(`Error : ${e}`)
-}}
+  global.getBuffer = async function getBuffer(url, options = {}) {
+    try {
+      const res = await axios({
+        method: "get",
+        url,
+        headers: {
+          'DNT': 1,
+          'User-Agent': 'GoogleBot',
+          'Upgrade-Insecure-Request': 1
+        },
+        ...options,
+        responseType: 'arraybuffer'
+      })
+      return res.data
+    } catch (e) {
+      console.log(`Error : ${e}`)
+      return null
+    }
+  }
   
-global.creador = 'Wa.me/393715279301'
-global.ofcbot = `${conn.user.jid.split('@')[0]}`
-global.namechannel = '=͟͟͞❀ 𝐘𝐮𝐤𝐢 𝐒𝐮𝐨𝐮 - 𝐂𝐡𝐚𝐧𝐧𝐞𝐥 ⏤͟͟͞͞★'
-global.namechannel2 = '=͟͟͞❀ 𝐘𝐮𝐤𝐢 𝐒𝐮𝐨𝐮 - 𝐂𝐡𝐚𝐧𝐧𝐞𝐥 ⏤͟͟͞͞★'
-global.namegrupo = 'ᰔᩚ ᥡᥙkі sᥙ᥆ᥙ • ᥆𝖿іᥴіᥲᥣ ❀'
-global.namecomu = 'ᰔᩚ ᥡᥙkіᑲ᥆𝗍-mძ • ᥴ᥆mᥙᥒі𝗍ᥡ ❀'
-global.listo = '✦ *Aquí tienes ฅ^•ﻌ•^ฅ*'
-global.fotoperfil = await conn.profilePictureUrl(m.sender, 'image').catch(_ => 'https://raw.githubusercontent.com/The-King-Destroy/Adiciones/main/Contenido/1745522645448.jpeg')
-
-global.canalIdM = [
-  "120363402846939411@newsletter",
-  "120363420047428304@newsletter",
-  "120363420941524030@newsletter"
-]
-global.canalNombreM = [
-  "✦ sʏᴀ ᴛᴇᴀᴍ | 2025 ✧",
-  "✧❅ꨄ ʏᴜʀᴜ ʏᴜʀɪ ┋ᴄʜᴀɴɴᴇʟ ☙❢❀",
-  "🔥 𝗩𝗶𝗿𝗮𝗹𝗦𝘁𝗶𝗰𝗸 & 𝗠𝗲𝗺𝗲𝘀 𝗕𝘆 𝗦𝗬𝗔 🎬"
-]
-global.channelRD = await getRandomChannel()
-
-global.d = new Date(new Date + 3600000)
-global.locale = 'es'
-global.dia = d.toLocaleDateString(locale, {weekday: 'long'})
-global.fecha = d.toLocaleDateString('es', {day: 'numeric', month: 'numeric', year: 'numeric'})
-global.mes = d.toLocaleDateString('es', {month: 'long'})
-global.año = d.toLocaleDateString('es', {year: 'numeric'})
-global.tiempo = d.toLocaleString('en-US', {hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true})
-
-global.rwait = '🕒'
-global.done = '✅'
-global.error = '✖️'
-global.msm = '⚠︎'
-
-global.emoji = '» ✧ «'
-global.emoji2 = '「✿」'
-global.emoji3 = '✦'
-global.emoji4 = '【❀】'
-global.emoji5 = '✰'
-global.emojis = [emoji, emoji2, emoji3, emoji4].getRandom()
-
-global.wait = '❍ Espera un momento, soy lenta...';
-global.waitt = '❍ Espera un momento, soy lenta...';
-global.waittt = '❍ Espera un momento, soy lenta...';
-global.waitttt = '❍ Espera un momento, soy lenta...';
-
-var canal = 'https://whatsapp.com/channel/0029VbAfPu9BqbrEMFWXKE0d'  
-var comunidad = 'https://chat.whatsapp.com/I0dMp2fEle7L6RaWBmwlAa'
-var git = 'https://github.com/The-King-Destroy'
-var github = 'https://github.com/The-King-Destroy/Yuki_Suou-Bot' 
-let correo = 'thekingdestroy507@gmail.com'
-global.redes = [canal, comunidad, git, github, correo].getRandom()
-
-let category = "imagen"
-const db = './src/database/db.json'
-const db_ = JSON.parse(fs.readFileSync(db))
-const random = Math.floor(Math.random() * db_.links[category].length)
-const randomlink = db_.links[category][random]
-const response = await fetch(randomlink)
-const rimg = await response.buffer()
-global.icons = rimg
-
-var ase = new Date(); var hour = ase.getHours(); switch(hour){ case 0: hour = 'Lɪɴᴅᴀ Nᴏᴄʜᴇ 🌃'; break; case 1: hour = 'Lɪɴᴅᴀ Nᴏᴄʜᴇ 🌃'; break; case 2: hour = 'Lɪɴᴅᴀ Nᴏᴄʜᴇ 🌃'; break; case 3: hour = 'Lɪɴᴅᴀ Mᴀɴ̃ᴀɴᴀ 🌄'; break; case 4: hour = 'Lɪɴᴅᴀ Mᴀɴ̃ᴀɴᴀ 🌄'; break; case 5: hour = 'Lɪɴᴅᴀ Mᴀɴ̃ᴀɴᴀ 🌄'; break; case 6: hour = 'Lɪɴᴅᴀ Mᴀɴ̃ᴀɴᴀ 🌄'; break; case 7: hour = 'Lɪɴᴅᴀ Mᴀɴ̃ᴀɴᴀ 🌅'; break; case 8: hour = 'Lɪɴᴅᴀ Mᴀɴ̃ᴀɴᴀ 🌄'; break; case 9: hour = 'Lɪɴᴅᴀ Mᴀɴ̃ᴀɴᴀ 🌄'; break; case 10: hour = 'Lɪɴᴅᴏ Dɪᴀ 🌤'; break; case 11: hour = 'Lɪɴᴅᴏ Dɪᴀ 🌤'; break; case 12: hour = 'Lɪɴᴅᴏ Dɪᴀ 🌤'; break; case 13: hour = 'Lɪɴᴅᴏ Dɪᴀ 🌤'; break; case 14: hour = 'Lɪɴᴅᴀ Tᴀʀᴅᴇ 🌆'; break; case 15: hour = 'Lɪɴᴅᴀ Tᴀʀᴅᴇ 🌆'; break; case 16: hour = 'Lɪɴᴅᴀ Tᴀʀᴅᴇ 🌆'; break; case 17: hour = 'Lɪɴᴅᴀ Tᴀʀᴅᴇ 🌆'; break; case 18: hour = 'Lɪɴᴅᴀ Nᴏᴄʜᴇ 🌃'; break; case 19: hour = 'Lɪɴᴅᴀ Nᴏᴄʜᴇ 🌃'; break; case 20: hour = 'Lɪɴᴅᴀ Nᴏᴄʜᴇ 🌃'; break; case 21: hour = 'Lɪɴᴅᴀ Nᴏᴄʜᴇ 🌃'; break; case 22: hour = 'Lɪɴᴅᴀ Nᴏᴄʜᴇ 🌃'; break; case 23: hour = 'Lɪɴᴅᴀ Nᴏᴄʜᴇ 🌃'; break;}
-global.saludo = hour;
-
-global.nombre = m.pushName || 'Anónimo'
-global.taguser = '@' + m.sender.split("@s.whatsapp.net")
-var more = String.fromCharCode(8206)
-global.readMore = more.repeat(850)
-
-global.packsticker = `✧ 𝖸𝗎𝗋𝗎 𝖸𝗎𝗋𝗂 𝗦𝗧𝗜𝗖𝗞𝗘𝗥𝗦 ✧
-💜 ᴜsᴜᴀʀɪᴏ: ${nombre}
-⛓️‍💥 ᴍᴀᴅᴇ ʙʏ ${botname}`;
-global.packsticker2 = `🍁 𝙾𝚆𝙽𝙴𝚁: Wirk`
+  // Estas variables globales dependen de conn, que no está declarado acá, 
+  // supongo que lo tienes global o lo defines en otro lado antes de usar handler
+  global.creador = 'Wa.me/393715279301'
+  global.ofcbot = conn.user.jid.split('@')[0]
+  global.namechannel = '=͟͟͞❀ 𝐘𝐮𝐤𝐢 𝐒𝐮𝐨𝐮 - 𝐂𝐡𝐚𝐧𝐧𝐞𝐥 ⏤͟͟͞͞★'
+  global.namechannel2 = '=͟͟͞❀ 𝐘𝐮𝐤𝐢 𝐒𝐮𝐨𝐮 - 𝐂𝐡𝐚𝐧𝐧𝐞𝐥 ⏤͟͟͞͞★'
+  global.namegrupo = 'ᰔᩚ ᥡᥙkі sᥙ᥆ᥙ • ᥆𝖿іᥴіᥲᥣ ❀'
+  global.namecomu = 'ᰔᩚ ᥡᥙkіᑲ᥆𝗍-mძ • ᥴ᥆mᥙᥒі𝗍ᥡ ❀'
+  global.listo = '✦ *Aquí tienes ฅ^•ﻌ•^ฅ*'
   
-global.fkontak = { key: {participant: `0@s.whatsapp.net`, ...(m.chat ? { remoteJid: `6285600793871-1614953337@g.us` } : {}) }, message: { 'contactMessage': { 'displayName': `${nombre}`, 'vcard': `BEGIN:VCARD\nVERSION:3.0\nN:XL;${nombre},;;;\nFN:${nombre},\nitem1.TEL;waid=${m.sender.split('@')[0]}:${m.sender.split('@')[0]}\nitem1.X-ABLabel:Ponsel\nEND:VCARD`, 'jpegThumbnail': null, thumbnail: null,sendEphemeral: true}}}
+  // Perfil, con catch para evitar que crashee
+  global.fotoperfil = await conn.profilePictureUrl(m.sender, 'image').catch(() => 'https://raw.githubusercontent.com/The-King-Destroy/Adiciones/main/Contenido/1745522645448.jpeg')
 
-global.fake = { contextInfo: { isForwarded: true, forwardedNewsletterMessageInfo: { newsletterJid: channelRD.id, newsletterName: channelRD.name, serverMessageId: -1 }
-}}, { quoted: m }
+  global.canalIdM = [
+    "120363402846939411@newsletter",
+    "120363420047428304@newsletter",
+    "120363420941524030@newsletter"
+  ]
+  global.canalNombreM = [
+    "✦ sʏᴀ ᴛᴇᴀᴍ | 2025 ✧",
+    "✧❅ꨄ ʏᴜʀᴜ ʏᴜʀɪ ┋ᴄʜᴀɴɴᴇʟ ☙❢❀",
+    "🔥 𝗩𝗶𝗿𝗮𝗹𝗦𝘁𝗶𝗰𝗸 & 𝗠𝗲𝗺𝗲𝘀 𝗕𝘆 𝗦𝗬𝗔 🎬"
+  ]
+  global.channelRD = await getRandomChannel()
 
-global.icono = [
-'https://qu.ax/dychF.jpg',
-].getRandom()
+  const d = new Date(Date.now() + 3600000)
+  const locale = 'es'
+  global.d = d
+  global.locale = locale
+  global.dia = d.toLocaleDateString(locale, { weekday: 'long' })
+  global.fecha = d.toLocaleDateString(locale, { day: 'numeric', month: 'numeric', year: 'numeric' })
+  global.mes = d.toLocaleDateString(locale, { month: 'long' })
+  global.año = d.toLocaleDateString(locale, { year: 'numeric' })
+  global.tiempo = d.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true })
 
-global.rcanal = {
-  contextInfo: {
-    isForwarded: true,
-    forwardingScore: 9999,
-    externalAdReply: {
-      showAdAttribution: true,
-      title: '🌸 𝚈𝚞𝚛𝚞 𝚈𝚞𝚛𝚒 - 𝙱𝚘𝚝 🌸',
-      body: '🍥 Made With : Wirk 🩵',
-      mediaUrl: 'https://whatsapp.com/channel/0029Vb5UfTC4CrfeKSamhp1f',
-      sourceUrl: 'https://whatsapp.com/channel/0029Vb5UfTC4CrfeKSamhp1f',
-      thumbnailUrl: icono, // ícono kawaii
-      mediaType: 1,
-      previewType: 'PHOTO',
-      renderLargerThumbnail: true
+  global.rwait = '🕒'
+  global.done = '✅'
+  global.error = '✖️'
+  global.msm = '⚠︎'
+
+  global.emoji = '» ✧ «'
+  global.emoji2 = '「✿」'
+  global.emoji3 = '✦'
+  global.emoji4 = '【❀】'
+  global.emoji5 = '✰'
+  global.emojis = pickRandom([global.emoji, global.emoji2, global.emoji3, global.emoji4])
+
+  global.wait = '❍ Espera un momento, soy lenta...'
+  global.waitt = '❍ Espera un momento, soy lenta...'
+  global.waittt = '❍ Espera un momento, soy lenta...'
+  global.waitttt = '❍ Espera un momento, soy lenta...'
+
+  const canal = 'https://whatsapp.com/channel/0029VbAfPu9BqbrEMFWXKE0d'
+  const comunidad = 'https://chat.whatsapp.com/I0dMp2fEle7L6RaWBmwlAa'
+  const git = 'https://github.com/The-King-Destroy'
+  const github = 'https://github.com/The-King-Destroy/Yuki_Suou-Bot'
+  const correo = 'thekingdestroy507@gmail.com'
+  global.redes = pickRandom([canal, comunidad, git, github, correo])
+
+  const category = "imagen"
+  const dbPath = './src/database/db.json'
+  const db_ = JSON.parse(fs.readFileSync(dbPath))
+  const randomIndex = Math.floor(Math.random() * db_.links[category].length)
+  const randomlink = db_.links[category][randomIndex]
+  const response = await fetch(randomlink)
+  const rimg = await response.buffer()
+  global.icons = rimg
+
+  const ase = new Date()
+  const hour = ase.getHours()
+  let saludo
+  switch (hour) {
+    case 0: case 1: case 2: case 18: case 19: case 20: case 21: case 22: case 23:
+      saludo = 'Lɪɴᴅᴀ Nᴏᴄʜᴇ 🌃'
+      break
+    case 3: case 4: case 5: case 6: case 8: case 9:
+      saludo = 'Lɪɴᴅᴀ Mᴀɴ̃ᴀɴᴀ 🌄'
+      break
+    case 7:
+      saludo = 'Lɪɴᴅᴀ Mᴀɴ̃ᴀɴᴀ 🌅'
+      break
+    case 10: case 11: case 12: case 13:
+      saludo = 'Lɪɴᴅᴏ Dɪᴀ 🌤'
+      break
+    case 14: case 15: case 16: case 17:
+      saludo = 'Lɪɴᴅᴀ Tᴀʀᴅᴇ 🌆'
+      break
+    default:
+      saludo = 'Hola'
+  }
+  global.saludo = saludo
+
+  global.nombre = m.pushName || 'Anónimo'
+  global.taguser = '@' + m.sender.split("@")[0]
+  const more = String.fromCharCode(8206)
+  global.readMore = more.repeat(850)
+
+  global.packsticker = `✧ 𝖸𝗎𝗋𝗎 𝖸𝗎𝗋𝗂 𝗦𝗧𝗜𝗖𝗞𝗘𝗥𝗦 ✧\n💜 ᴜsᴜᴀʀɪᴏ: ${global.nombre}\n⛓️‍💥 ᴍᴀᴅᴇ ʙʏ ${global.botname || 'Bot'}`
+  global.packsticker2 = `🍁 𝙾𝚆𝙽𝙴𝚁: Wirk`
+
+  global.fkontak = {
+    key: {
+      participant: `0@s.whatsapp.net`,
+      ...(m.chat ? { remoteJid: `6285600793871-1614953337@g.us` } : {})
+    },
+    message: {
+      contactMessage: {
+        displayName: global.nombre,
+        vcard: `BEGIN:VCARD\nVERSION:3.0\nN:XL;${global.nombre},;;;\nFN:${global.nombre},\nitem1.TEL;waid=${m.sender.split('@')[0]}:${m.sender.split('@')[0]}\nitem1.X-ABLabel:Ponsel\nEND:VCARD`,
+        jpegThumbnail: null,
+        thumbnail: null,
+        sendEphemeral: true
+      }
+    }
+  }
+
+  global.fake = {
+    contextInfo: {
+      isForwarded: true,
+      forwardedNewsletterMessageInfo: {
+        newsletterJid: global.channelRD.id,
+        newsletterName: global.channelRD.name,
+        serverMessageId: -1
+      }
+    }
+  }
+
+  global.icono = pickRandom([
+    'https://qu.ax/dychF.jpg',
+  ])
+
+  global.rcanal = {
+    contextInfo: {
+      isForwarded: true,
+      forwardingScore: 9999
     }
   }
 }
@@ -136,8 +173,8 @@ function pickRandom(list) {
 }
 
 async function getRandomChannel() {
-  let randomIndex = Math.floor(Math.random() * canalIdM.length)
-  let id = canalIdM[randomIndex]
-  let name = canalNombreM[randomIndex]
+  let randomIndex = Math.floor(Math.random() * global.canalIdM.length)
+  let id = global.canalIdM[randomIndex]
+  let name = global.canalNombreM[randomIndex]
   return { id, name }
 }
