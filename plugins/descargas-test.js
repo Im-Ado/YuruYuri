@@ -35,8 +35,8 @@ author = author || 'no encontrado'
     const JT = {
       contextInfo: {
         externalAdReply: {
-          title: botname,
-          body: dev,
+          title: packname,
+          body: wm,
           mediaType: 1,
           previewType: 0,
           mediaUrl: url,
