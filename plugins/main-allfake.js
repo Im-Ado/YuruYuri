@@ -117,15 +117,14 @@ global.rcanal = {
     forwardingScore: 9999,
     externalAdReply: {
       showAdAttribution: true,
-      title: packname,       // Asegurate que esta variable esté definida antes
-      body: dev,             // Asegurate que 'dev' también esté definida
+      title: '🌸 𝚈𝚞𝚛𝚞 𝚈𝚞𝚛𝚒 - 𝙱𝚘𝚝 🌸',
+      body: '🍥 Made With : Wirk 🩵',
       mediaUrl: 'https://whatsapp.com/channel/0029Vb5UfTC4CrfeKSamhp1f',
-      description: null,
-      previewType: 'PHOTO',
-      thumbnailUrl: icono,   // Asegurate que 'icono' sea una URL válida
-      sourceUrl: redes,      // Asegurate que 'redes' sea una URL
+      sourceUrl: 'https://whatsapp.com/channel/0029Vb5UfTC4CrfeKSamhp1f',
+      thumbnailUrl: icono, // ícono kawaii
       mediaType: 1,
-      renderLargerThumbnail: false
+      previewType: 'PHOTO',
+      renderLargerThumbnail: true
     }
   }
 }
