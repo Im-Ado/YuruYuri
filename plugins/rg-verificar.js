@@ -61,7 +61,19 @@ let handler = async function (m, { conn, text, usedPrefix, command }) {
   await m.react('🔥')
 
   await conn.sendMessage(m.chat, {
-    text: regbot
+    image: { url: pp },
+    caption: regbot,
+    contextInfo: {
+      externalAdReply: {
+        title: `✦ Registro completado ✦`,
+        body: `🎀 Nombre: ${name} | Edad: ${age} 🎀`,
+        thumbnailUrl: pp,
+        sourceUrl: `https://wa.me/${m.sender.split('@')[0]}`,
+        mediaType: 1,
+        renderLargerThumbnail: true,
+        showAdAttribution: false
+      }
+    }
   }, { quoted: m })
 
   // Notificación al grupo oficial
