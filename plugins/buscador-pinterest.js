@@ -12,7 +12,7 @@ let handler = async (m, { conn, text }) => {
 
     const medias = results.slice(0, 10).map(img => ({ type: 'image', data: { url: img.hd } }))
 
-    await conn.sendSylphy(m.chat, medias, {
+    await conn.sendMessage(m.chat, medias, {
       caption: `❀  Pinterest  -  Search  ❀\n\n✧ Búsqueda » "${text}"\n✐ Resultados » ${medias.length}\n\n${dev}`,
       quoted: m
     })
