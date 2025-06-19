@@ -74,7 +74,7 @@ author = author || 'no encontrado'
 }
 handler.command = handler.help = ['yta', 'ytp']
 handler.tags = ['descargas']
-handler.group = true
+handler.group = false 
 
 export default handler
 
