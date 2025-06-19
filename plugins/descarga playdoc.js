@@ -1,22 +1,6 @@
 import fetch from 'node-fetch';
 
-const JT = {
-  contextInfo: {
-    externalAdReply: {
-      title: packname,
-      body: textbot,
-      mediaType: 1,
-      previewType: 0,
-      mediaUrl: null,
-      sourceUrl: null,
-      thumbnail: img,
-      renderLargerThumbnail: true,
-    },
-  },
-};
-
 let handler = async (m, { conn, usedPrefix, command, text }) => {
-
   if (!text) return m.reply(`✐ Ingresa Un Texto Para Buscar En Youtube\n> *Ejemplo:* ${usedPrefix + command} ozuna`);
 
   try {
@@ -28,24 +12,40 @@ let handler = async (m, { conn, usedPrefix, command, text }) => {
 > ✦ *Canal* » ${results.author.name}
 > ⴵ *Duración:* » ${results.duration}
 > ✰ *Vistas:* » ${results.views}
-> ✐ *Publicación* » ${results.publishedAt}
-> 🜸 *Link* » ${results.url}`;
+> ✐ *Publicación:* » ${results.publishedAt}
+> ❒ *Tamaño:* » ${results.HumanReadable}
+> 🜸 *Link:* » ${results.url}`;
 
     let img = results.image;
 
-    // Aquí se aplica el JT al mensaje con imagen y caption
-    conn.sendMessage(m.chat, { image: { url: img }, caption: txt, ...JT }, { quoted: m });
+    await conn.sendMessage(m.chat, { image: { url: img }, caption: txt }, { quoted: m });
 
     let api2 = await (await fetch(`https://api.vreden.my.id/api/ytmp3?url=${results.url}`)).json();
+    let audioUrl = api2?.result?.download?.url;
+    let fileSize = api2?.result?.size;
 
-    await conn.sendMessage(m.chat, { 
-      audio: { url: api2.result.download.url }, 
-      mimetype: 'audio/mpeg', 
-      ptt: true 
+    if (!audioUrl) return m.reply('❌ No se pudo obtener el audio');
+
+    await conn.sendMessage(m.chat, {
+      audio: { url: audioUrl },
+      mimetype: 'audio/mpeg',
+      ptt: true,
+      fileName: `${results.title}.mp3`,
+      contextInfo: {
+        externalAdReply: {
+          title: results.title,
+          body: `Tamaño: ${fileSize || 'desconocido'} • Por ${results.author.name}`,
+          mediaType: 1,
+          previewType: 0,
+          thumbnail: await (await fetch(img)).buffer(),
+          renderLargerThumbnail: true,
+        },
+      },
     }, { quoted: m });
 
   } catch (e) {
-    m.reply(`Error: ${e.message}`);
+    console.error(e)
+    m.reply(`❌ Error: ${e.message}`);
     m.react('✖️');
   }
 };
