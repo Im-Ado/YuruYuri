@@ -1,34 +1,42 @@
 import fetch from 'node-fetch';
 
-let handler = async(m, { conn, usedPrefix, command, text }) => {
+let handler = async (m, { conn, usedPrefix, command, text }) => {
+  if (!text) return m.reply(`✐ Ingresa un texto para buscar en YouTube\n> *Ejemplo:* ${usedPrefix + command} ozuna`);
 
-if (!text) return m.reply(`✐ Ingresa Un Texto Para Buscar En Youtube\n> *Ejemplo:* ${usedPrefix + command}ozuna`);
+  try {
+    let api = await (await fetch(`https://delirius-apiofc.vercel.app/search/ytsearch?q=${text}`)).json();
+    let results = api.data[0];
 
-try {
-let api = await (await fetch(`https://delirius-apiofc.vercel.app/search/ytsearch?q=${text}`)).json();
+    let txt = `*「✦」 ${results.title}*
 
-let results = api.data[0];
+✦ *Canal =* ${results.author.name}
+ⴵ *Duración =* ${results.duration}
+✰ *Vistas =* ${results.views}
+✐ *Publicación =* ${results.publishedAt}
+🜸 *Link =* ${results.url}`;
 
-let txt = `*「✦」 ${results.title}*
+    let img = results.image;
 
- ✦ *Canal* = ${results.author.name}\nⴵ *Duración:* = ${results.duration}\n✰ *Vistas:* = ${results.views}\n✐ *Publicación* = ${results.publishedAt}\n🜸 *Link* = ${results.url}`;
+    await conn.sendMessage(m.chat, { image: { url: img }, caption: txt }, { quoted: m });
 
-let img = results.image;
+    let api2 = await (await fetch(`https://api.vreden.my.id/api/ytmp3?url=${results.url}`)).json();
 
-conn.sendMessage(m.chat, { image: { url: img }, caption: txt }, { quoted: m });
+    if (!api2?.result?.download?.url) return m.reply('❌ No se encontró el audio para descargar');
 
-let api2 = await(await fetch(`https://api.vreden.my.id/api/ytmp3?url=${results.url}`)).json();
+    await conn.sendMessage(m.chat, {
+      audio: { url: api2.result.download.url },
+      mimetype: 'audio/mpeg',
+      ptt: true,
+      fileName: `${results.title}.mp3`
+    }, { quoted: m });
 
-// if (!api2?.result?.download.url) return m.reply('No Se  Encontraron Resultados');
-
-await conn.sendMessage(m.chat, { audio: { url: api2.result.download.url }, mimetype: 'audio/mpeg', ptt: true, fileName: `${results.title}.mp3` }, { quoted: m });
-
-} catch (e) {
-m.reply(`Error: ${e.message}`);
-m.react('✖️');
+  } catch (e) {
+    console.error(e);
+    m.reply(`❌ Error: ${e.message}`);
+    m.react('✖️');
   }
-}
+};
 
 handler.command = ['play', 'pdoc'];
 
-export default handler
+export default handler;
