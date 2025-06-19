@@ -14,7 +14,7 @@ let handler = async (m, { conn, args, usedPrefix, text, command }) => {
       `🧩 *Usa el comando así:*\n> *${usedPrefix + command}* mp3 Alan Walker\n\n` +
       `🎧 *Formatos válidos:*\n` +
       `• mp3\n• mp3doc\n• mp4\n• mp4doc`,
-      m, rcanal
+      m
     )
   }
 
@@ -23,7 +23,7 @@ let handler = async (m, { conn, args, usedPrefix, text, command }) => {
       m.chat,
       `✦ *Falta el título del video.*\n\n` +
       `🧩 *Ejemplo:*\n> *${usedPrefix + command}* mp4 Alan Walker - Faded`,
-      m, rcanal
+      m
     )
   }
 
@@ -40,7 +40,7 @@ let handler = async (m, { conn, args, usedPrefix, text, command }) => {
   caption += `> = Enlace » https://youtu.be/${video.videoId}\n\n`
   caption += `*Enviando..*`
 
-  await conn.sendFile(m.chat, video.thumbnail, 'thumb.jpg', caption, m, rcanal)
+  await conn.sendFile(m.chat, video.thumbnail, 'thumb.jpg', caption, m)
 
   try {
     let data = formato.includes('mp3') ? await Starlights.ytmp3(video.url) : await Starlights.ytmp4(video.url)
@@ -61,7 +61,7 @@ let handler = async (m, { conn, args, usedPrefix, text, command }) => {
   } catch (e) {
     console.error(e)
     await m.react('✖️')
-    conn.reply(m.chat, '✦ Ocurrió un error al descargar el archivo.', m, rcanal)
+    conn.reply(m.chat, '✦ Ocurrió un error al descargar el archivo.', m)
   }
 }
 
