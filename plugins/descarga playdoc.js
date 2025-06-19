@@ -45,7 +45,7 @@ let handler = async (m, { text, conn, command, usedPrefix }) => {
     const channel = video.channel;
 
     let txt = `*「✦」 ${videoTitle}*\n\n` +
-      `> ✦ Canal » ${channel}\n` +
+      `✦ Canal » ${channel}\n` +
       `ⴵ Duración: » ${duration}s\n` +
       `✰ Vistas: » ${views}\n` +
       `🜸 Link: » ${videoUrl}\n` +
@@ -61,11 +61,16 @@ let handler = async (m, { text, conn, command, usedPrefix }) => {
 
     let audioUrl = downloadJson.file_url;
 
+    // Aquí le damos contexto de mensaje reenviado para que WhatsApp lo trate más rápido visualmente
     await conn.sendMessage(m.chat, {
       audio: { url: audioUrl },
       mimetype: 'audio/mpeg',
       ptt: true,
       fileName: `${videoTitle}.mp3`,
+      contextInfo: {
+        forwardingScore: 9999,
+        isForwarded: true
+      }
     }, { quoted: m });
 
   } catch (e) {
