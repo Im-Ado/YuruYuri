@@ -581,20 +581,8 @@ let handler = async (m, { conn, args }) => {
   `.trim()
 
   await conn.sendMessage(m.chat, {
-    image: { url: banner }, // Use the global 'banner' variable here
-    caption: captionText,  // Use the generated caption text
-    contextInfo: {
-      mentionedJid: [m.sender, userId],
-      externalAdReply: {
-        title: botname,
-        body: textbot,
-        thumbnailUrl: banner,
-        sourceUrl: redes,
-        mediaType: 1,
-        showAdAttribution: true,
-        renderLargerThumbnail: true,
-      },
-    },
+    image: { url: banner },
+    caption: captionText
   }, { quoted: m })
 
 }
