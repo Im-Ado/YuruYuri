@@ -1,14 +1,5 @@
 import PhoneNumber from 'awesome-phonenumber';
 
-// Define these variables globally or pass them as arguments if they are not truly global
-// For the purpose of making the provided snippet runnable, I'm defining them here.
-const packname = "Nombre del Paquete"; // You should define packname
-const botname = "Nombre del Bot"; // You should define botname
-const textbot = "Texto de información del bot"; // You should define textbot
-const banner = "URL de la imagen del banner"; // You should define banner URL
-const redes = "URL de tus redes sociales"; // You should define redes URL
-const moneda = "Monedas"; // Define the currency unit
-
 let handler = async (m, { conn, args }) => {
   const regionNames = new Intl.DisplayNames(['es'], { type: 'region' });
 
@@ -20,8 +11,8 @@ let handler = async (m, { conn, args }) => {
   }
 
   const number = m.sender.replace('@s.whatsapp.net', '');
-  const phoneInfo = new PhoneNumber('+' + number); // Use 'new' keyword for PhoneNumber
-  const countryCode = phoneInfo.getRegionCode(); // getRegionCode doesn't take 'international' as argument
+  const phoneInfo = new PhoneNumber('+' + number);
+  const countryCode = phoneInfo.getRegionCode();
   const bandera = banderaEmoji(countryCode) || '🌐';
   const pais = regionNames.of(countryCode) || 'Desconocido';
   const mundo = `${bandera} ${pais}`;
@@ -593,8 +584,8 @@ let handler = async (m, { conn, args }) => {
       externalAdReply: {
         title: botname,
         body: textbot,
-        thumbnailUrl: banner,
-        sourceUrl: redes,
+        thumbnailUrl: banner, // Uses the globally defined 'banner'
+        sourceUrl: redes,    // Uses the globally defined 'redes'
         mediaType: 1,
         showAdAttribution: true,
         renderLargerThumbnail: true,
