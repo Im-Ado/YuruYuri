@@ -5,7 +5,7 @@ import axios from 'axios'
 import moment from 'moment-timezone'
 const { generateWAMessageFromContent, prepareWAMessageMedia, proto } = pkg
 
-var handler = async (m) => {
+var handler = async (conn, m) => {  // <--- aquí agregué conn
 
   global.getBuffer = async function getBuffer(url, options = {}) {
     try {
@@ -26,18 +26,15 @@ var handler = async (m) => {
       return null
     }
   }
-  
-  // Estas variables globales dependen de conn, que no está declarado acá, 
-  // supongo que lo tienes global o lo defines en otro lado antes de usar handler
+
   global.creador = 'Wa.me/393715279301'
-  global.ofcbot = conn.user.jid.split('@')[0]
+  global.ofcbot = conn.user.jid.split('@')[0]  // ahora sí conn definido
   global.namechannel = '=͟͟͞❀ 𝐘𝐮𝐤𝐢 𝐒𝐮𝐨𝐮 - 𝐂𝐡𝐚𝐧𝐧𝐞𝐥 ⏤͟͟͞͞★'
   global.namechannel2 = '=͟͟͞❀ 𝐘𝐮𝐤𝐢 𝐒𝐮𝐨𝐮 - 𝐂𝐡𝐚𝐧𝐧𝐞𝐥 ⏤͟͟͞͞★'
   global.namegrupo = 'ᰔᩚ ᥡᥙkі sᥙ᥆ᥙ • ᥆𝖿іᥴіᥲᥣ ❀'
   global.namecomu = 'ᰔᩚ ᥡᥙkіᑲ᥆𝗍-mძ • ᥴ᥆mᥙᥒі𝗍ᥡ ❀'
   global.listo = '✦ *Aquí tienes ฅ^•ﻌ•^ฅ*'
-  
-  // Perfil, con catch para evitar que crashee
+
   global.fotoperfil = await conn.profilePictureUrl(m.sender, 'image').catch(() => 'https://raw.githubusercontent.com/The-King-Destroy/Adiciones/main/Contenido/1745522645448.jpeg')
 
   global.canalIdM = [
