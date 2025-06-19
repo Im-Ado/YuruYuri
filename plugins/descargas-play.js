@@ -1,54 +1,30 @@
-let handler = async (m, { conn, usedPrefix, command, text }) => {
-  if (!text) return m.reply(`✎ Ingresa un texto para buscar en YouTube.\n> *Ejemplo:* ${usedPrefix + command} Shakira`);
+import Starlights from '@StarlightsTeam/Scraper'
+let limit = 200
 
-  try {
-    const searchApi = `https://delirius-apiofc.vercel.app/search/ytsearch?q=${text}`;
-    const searchResponse = await fetch(searchApi);
-    const searchData = await searchResponse.json();
+let handler = async (m, { conn, text, isPrems, isOwner, usedPrefix, command }) => {
+if (!m.quoted) return conn.reply(m.chat, `[ ✰ ] Etiqueta el mensaje que contenga el resultado de YouTube Play.`, m, rcanal).then(_ => m.react('✖️'))
+if (!m.quoted.text.includes("乂  Y O U T U B E  -  P L A Y")) return conn.reply(m.chat, `[ ✰ ] Etiqueta el mensaje que contenga el resultado de YouTube Play.`, m, rcanal).then(_ => m.react('✖️'))
+let urls = m.quoted.text.match(new RegExp(/(?:https?:\/\/)?(?:youtu\.be\/|(?:www\.|m\.)?youtube\.com\/(?:watch|v|embed|shorts)(?:\.php)?(?:\?.*v=|\/))([a-zA-Z0-9\_-]+)/, 'gi'))
+if (!urls) return conn.reply(m.chat, `Resultado no Encontrado.`, m, rcanal).then(_ => m.react('✖️'))
+if (urls.length < text) return conn.reply(m.chat, `Resultado no Encontrado.`, m, rcanal).then(_ => m.react('✖️'))
+let user = global.db.data.users[m.sender]
 
-    if (!searchData?.data || searchData.data.length === 0) {
-      return m.reply(`⚠️ No se encontraron resultados para "${text}".`);
-    }
+await m.react('🕓')
+try {
+let v = urls[0]
+let { title, size, quality, thumbnail, dl_url } = await Starlights.ytmp3(v)
 
-    const video = searchData.data[0]; // Tomar el primer resultado
-    const videoDetails = ` *「✦」 ${video.title}*
+if (size.split('MB')[0] >= limit) return m.reply(`El archivo pesa mas de ${limit} MB, se canceló la Descarga.`).then(_ => m.react('✖️'))
 
-> ✦ *Canal:* » ${video.author.name}
-> ⴵ *Duración:* » ${video.duration}
-> ✰ *Vistas:* » ${video.views}
-> ✐ *Publicado:* » ${video.publishedAt}
-> 🜸 *Enlace:* » ${video.url}
-`;
+await conn.sendFile(m.chat, dl_url, title + '.mp3', null, m, false, { mimetype: 'audio/mpeg', ptt: true, asDocument: user.useDocument })
+await m.react('✅')
+} catch {
+await m.react('✖️')
+}}
+handler.help = ['Audio']
+handler.tags = ['downloader']
+handler.customPrefix = /^(Audio|audio)/
+handler.command = new RegExp
+//handler.limit = 1
 
-    await conn.sendMessage(m.chat, {
-      image: { url: video.image },
-      caption: videoDetails.trim()
-    }, { quoted: m });
-
-    // CORREGIDO: encodeURIComponent en la URL
-    const downloadApi = `https://api.stellarwa.xyz/dow/ytmp3?url=${encodeURIComponent(video.url)}`;
-    const downloadResponse = await fetch(downloadApi);
-    const downloadData = await downloadResponse.json();
-
-    if (!downloadData?.result?.download?.url) {
-      return m.reply("❌ No se pudo obtener el audio del video.");
-    }
-
-    await conn.sendMessage(m.chat, {
-      audio: { url: downloadData.result.download.url },
-      mimetype: 'audio/mpeg',
-      fileName: `${video.title}.mp3`
-    }, { quoted: m });
-
-    await m.react("✅");
-  } catch (error) {
-    console.error(error);
-    m.reply(`❌ Error al procesar la solicitud:\n${error.message}`);
-  }
-};
-
-handler.command = ['playaudio'];
-handler.help = ['playaudio <texto>'];
-handler.tags = ['media'];
-
-export default handler;
+export default handler
