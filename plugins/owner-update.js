@@ -14,9 +14,9 @@ let handler = async (m, { conn }) => {
     }
 
     if (stdout.includes('Already up to date.')) {
-      conn.reply(m.chat, `${emoji4} El bot ya está actualizado.`, m, rcanal);
+      conn.reply(m.chat, `${emoji4} El bot ya está actualizado.`, m);
     } else {
-      conn.reply(m.chat, `${emoji} Actualización realizada con éxito.\n\n${stdout}`, m, rcanal);
+      conn.reply(m.chat, `${emoji} Actualización realizada con éxito.\n\n${stdout}`, m);
     }
   });
 };
