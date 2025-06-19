@@ -28,7 +28,8 @@ let handler = async (m, { conn, args }) => {
   let totalCommands = Object.values(global.plugins).filter((v) => v.help && v.tags).length
 
   let captionText = `
-𝐇𝐨𝐥𝐚, @${userId.split('@')[0]}! 𝐒𝐨𝐲 *${packname}*
+𝐇𝐨𝐥𝐚, @${userId.split('@')[0]}! 
+𝐒𝐨𝐲 *${packname}*
 ᴀǫᴜɪ ᴛɪᴇɴᴇs ʟᴀ ʟɪsᴛᴀ ᴅᴇ ᴄᴏᴍᴀɴᴅᴏs
 ╭┈ ↷
 │ᰔᩚ *Modo* : Público
@@ -39,6 +40,8 @@ let handler = async (m, { conn, args }) => {
 │★ *País* : ${mundo}
 │❐ *Baileys* : Multi Device
 ╰─────────────────
+
+*⦉✧⦊ ᴄʜᴀɴɴᴇʟ :* https://whatsapp.com/channel/0029Vb5UfTC4CrfeKSamhp1f
 
 »  ⊹ ˚୨ •(=^●ω●^=)•  *Info-Bot* ⊹
 > ✐ Comandos para ver el estado e información de la Bot.
