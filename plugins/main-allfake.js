@@ -155,7 +155,7 @@ var handler = async (conn, m) => {  // <--- aquí agregué conn
     'https://qu.ax/dychF.jpg',
   ])
 
-  global.rcanal = {
+  global.bcanal = {
     contextInfo: {
       isForwarded: true,
       forwardingScore: 9999
