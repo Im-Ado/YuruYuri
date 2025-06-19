@@ -1,5 +1,7 @@
 import PhoneNumber from 'awesome-phonenumber';
 
+// Assuming global variables like packname, botname, textbot, banner, redes, moneda are already defined.
+
 let handler = async (m, { conn, args }) => {
   const regionNames = new Intl.DisplayNames(['es'], { type: 'region' });
 
@@ -16,6 +18,7 @@ let handler = async (m, { conn, args }) => {
   const bandera = banderaEmoji(countryCode) || '🌐';
   const pais = regionNames.of(countryCode) || 'Desconocido';
   const mundo = `${bandera} ${pais}`;
+
   let userId = m.mentionedJid && m.mentionedJid[0] ? m.mentionedJid[0] : m.sender
   let user = global.db.data.users[userId]
   let name = conn.getName(userId)
@@ -24,7 +27,7 @@ let handler = async (m, { conn, args }) => {
   let totalreg = Object.keys(global.db.data.users).length
   let totalCommands = Object.values(global.plugins).filter((v) => v.help && v.tags).length
 
-  let txt = `
+  let captionText = `
 𝐇𝐨𝐥𝐚, @${userId.split('@')[0]}! 𝐒𝐨𝐲 *${packname}*
 ᴀǫᴜɪ ᴛɪᴇɴᴇs ʟᴀ ʟɪsᴛᴀ ᴅᴇ ᴄᴏᴍᴀɴᴅᴏs
 ╭┈ ↷
@@ -578,14 +581,15 @@ let handler = async (m, { conn, args }) => {
   `.trim()
 
   await conn.sendMessage(m.chat, {
-    text: txt,
+    image: { url: banner }, // Use the global 'banner' variable here
+    caption: captionText,  // Use the generated caption text
     contextInfo: {
       mentionedJid: [m.sender, userId],
       externalAdReply: {
         title: botname,
         body: textbot,
-        thumbnailUrl: banner, // Uses the globally defined 'banner'
-        sourceUrl: redes,    // Uses the globally defined 'redes'
+        thumbnailUrl: banner,
+        sourceUrl: redes,
         mediaType: 1,
         showAdAttribution: true,
         renderLargerThumbnail: true,
