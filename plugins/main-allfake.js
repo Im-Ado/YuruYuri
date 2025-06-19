@@ -54,7 +54,7 @@ global.error = '✖️'
 global.msm = '⚠︎'
 
 global.emoji = '《✧》'
-global.emoji2 = '✿'
+global.emoji2 = '✧'
 global.emoji3 = '✦'
 global.emoji4 = '❍'
 global.emoji5 = '✰'
@@ -101,12 +101,7 @@ global.icono = [
 'https://raw.githubusercontent.com/The-King-Destroy/Adiciones/main/Contenido/1749731657991.jpeg',
 ].getRandom()
 
-global.rcanal = {
-  contextInfo: {
-    isForwarded: true,
-    forwardingScore: 9999
-  }
-}
+global.rcanal = { contextInfo: { isForwarded: true, forwardedNewsletterMessageInfo: { newsletterJid: channelRD.id, serverMessageId: 100, newsletterName: channelRD.name, }, externalAdReply: { showAdAttribution: true, title: packname, body: dev, mediaUrl: null, description: null, previewType: "PHOTO", thumbnailUrl: icono, sourceUrl: redes, mediaType: 1, renderLargerThumbnail: false }, }, }}
 
 export default handler
 
