@@ -30,7 +30,7 @@ url = url || 'no encontrado'
 author = author || 'no encontrado'
     const vistas = formatViews(views)
     const canal = author.name ? author.name : 'Desconocido'
-    const infoMessage = `✿ ᴍᴘ4 ᴅᴏᴡɴʟᴏᴀᴅ ✿\n「✦」 *<${title || 'Desconocido'}>*\n\n> ✧ Canal » *${canal}*\n> ✰ Vistas » *${vistas || 'Desconocido'}*\n> ⴵ Duración » *${timestamp || 'Desconocido'}*\n> ✐ Publicado » *${ago || 'Desconocido'}*\n> 🜸 Link » ${url}`
+    const infoMessage = `✿ ᴍᴘ4 ᴅᴏᴡɴʟᴏᴀᴅ ✿\n✦ *Duración* = ${timestamp}\n🜸 *Link* = ${url}`
     const thumb = (await conn.getFile(thumbnail))?.data
     const JT = {
       contextInfo: {
@@ -39,8 +39,8 @@ author = author || 'no encontrado'
           body: textbot,
           mediaType: 1,
           previewType: 0,
-          mediaUrl: url,
-          sourceUrl: url,
+          mediaUrl: null,
+          sourceUrl: null,
           thumbnail: thumb,
           renderLargerThumbnail: true,
         },
