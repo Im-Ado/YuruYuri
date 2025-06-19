@@ -70,7 +70,7 @@ let handler = async function (m, { conn, text, usedPrefix, command }) {
         thumbnailUrl: pp,
         sourceUrl: `https://wa.me/${m.sender.split('@')[0]}`,
         mediaType: 1,
-        renderLargerThumbnail: true,
+        renderLargerThumbnail: false,
         showAdAttribution: false
       }
     }
