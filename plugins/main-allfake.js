@@ -117,13 +117,13 @@ global.rcanal = {
     forwardingScore: 9999,
     externalAdReply: {
       showAdAttribution: true,
-      title: packname,
-      body: dev,
+      title: packname,       // Asegurate que esta variable esté definida antes
+      body: dev,             // Asegurate que 'dev' también esté definida
       mediaUrl: 'https://whatsapp.com/channel/0029Vb5UfTC4CrfeKSamhp1f',
       description: null,
-      previewType: "PHOTO",
-      thumbnailUrl: icono,
-      sourceUrl: redes,
+      previewType: 'PHOTO',
+      thumbnailUrl: icono,   // Asegurate que 'icono' sea una URL válida
+      sourceUrl: redes,      // Asegurate que 'redes' sea una URL
       mediaType: 1,
       renderLargerThumbnail: false
     }
@@ -133,12 +133,12 @@ global.rcanal = {
 export default handler
 
 function pickRandom(list) {
-return list[Math.floor(Math.random() * list.length)]
-  }
+  return list[Math.floor(Math.random() * list.length)]
+}
 
 async function getRandomChannel() {
-let randomIndex = Math.floor(Math.random() * canalIdM.length)
-let id = canalIdM[randomIndex]
-let name = canalNombreM[randomIndex]
-return { id, name }
+  let randomIndex = Math.floor(Math.random() * canalIdM.length)
+  let id = canalIdM[randomIndex]
+  let name = canalNombreM[randomIndex]
+  return { id, name }
 }
