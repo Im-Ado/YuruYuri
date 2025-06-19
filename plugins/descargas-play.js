@@ -25,13 +25,15 @@ let handler = async (m, { conn, usedPrefix, command, text }) => {
       caption: videoDetails.trim()
     }, { quoted: m });
 
-    const downloadApi = `https://api.stellarwa.xyz/dow/ytmp3?url=${video.url}`;
+    // CORREGIDO: encodeURIComponent en la URL
+    const downloadApi = `https://api.stellarwa.xyz/dow/ytmp3?url=${encodeURIComponent(video.url)}`;
     const downloadResponse = await fetch(downloadApi);
     const downloadData = await downloadResponse.json();
 
     if (!downloadData?.result?.download?.url) {
       return m.reply("❌ No se pudo obtener el audio del video.");
     }
+
     await conn.sendMessage(m.chat, {
       audio: { url: downloadData.result.download.url },
       mimetype: 'audio/mpeg',
@@ -45,8 +47,8 @@ let handler = async (m, { conn, usedPrefix, command, text }) => {
   }
 };
 
-handler.command = ['playaudio', 'playaudio'];
-handler.help = ['play <texto>', 'play<texto>'];
+handler.command = ['playaudio'];
+handler.help = ['playaudio <texto>'];
 handler.tags = ['media'];
 
 export default handler;
