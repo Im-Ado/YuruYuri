@@ -1,159 +1,114 @@
-import fetch from "node-fetch";
-import yts from "yt-search";
-import axios from "axios";
+import fetch from 'node-fetch'
+import yts from 'yt-search'
 
-const formatAudio = ["mp3", "m4a", "webm", "acc", "flac", "opus", "ogg", "wav"];
-const formatVideo = ["360", "480", "720", "1080", "1440", "4k"];
+let handler = async (m, { conn: star, command, args, text, usedPrefix }) => {
+  if (!text) return m.reply('Ingresa el título de un video o canción de *YouTube*.\n\n`Ejemplo:`\n' + `> *${usedPrefix + command}* La vaca `)
+    await m.react('🕓')
+    try {
+    let res = await search(args.join(" "))
+    let img = await (await fetch(`${res[0].image}`)).buffer()
+    let txt = '`乂  Y O U T U B E  -  P L A Y`\n\n'
+       txt += `\t\t*✿ *${res[0].title}* ✿\n`
+       txt += `\t\t*✧ Duración* = ${secondString(res[0].duration.seconds)}\n`
+       txt += `\t\t*✧ Publicado* = ${eYear(res[0].ago)}\n`
+       txt += `\t\t*✧ Canal* = ${res[0].author.name || 'Desconocido'}\n`
+       txt += `\t\t*✧ ID* = ${res[0].videoId}\n`
+       txt += `\t\t*✧ Url* = ${'https://youtu.be/' + res[0].videoId}\n\n`
+       txt += `> Para descargar responde a este mensaje con *Video* o *Audio*.`
+await star.sendFile(m.chat, img, 'thumbnail.jpg', txt, m)
+await m.react('✅')
+} catch {
+await m.react('✖️')
+}}
+handler.help = ['play *<búsqueda>*']
+handler.tags = ['downloader']
+handler.command = ['play']
+handler.register = true 
+export default handler
 
-const ddownr = {
-  download: async (url, format) => {
-    if (!formatAudio.includes(format) && !formatVideo.includes(format)) {
-      throw new Error("⚠ Formato no soportado, elige uno de la lista disponible.");
+async function search(query, options = {}) {
+  let search = await yts.search({ query, hl: "es", gl: "ES", ...options })
+  return search.videos
+}
+
+function MilesNumber(number) {
+  let exp = /(\d)(?=(\d{3})+(?!\d))/g
+  let rep = "$1."
+  let arr = number.toString().split(".")
+  arr[0] = arr[0].replace(exp, rep)
+  return arr[1] ? arr.join(".") : arr[0]
+}
+
+function secondString(seconds) {
+  seconds = Number(seconds);
+  const d = Math.floor(seconds / (3600 * 24));
+  const h = Math.floor((seconds % (3600 * 24)) / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  const s = Math.floor(seconds % 60);
+  const dDisplay = d > 0 ? d + (d == 1 ? ' Día, ' : ' Días, ') : '';
+  const hDisplay = h > 0 ? h + (h == 1 ? ' Hora, ' : ' Horas, ') : '';
+  const mDisplay = m > 0 ? m + (m == 1 ? ' Minuto, ' : ' Minutos, ') : '';
+  const sDisplay = s > 0 ? s + (s == 1 ? ' Segundo' : ' Segundos') : '';
+  return dDisplay + hDisplay + mDisplay + sDisplay;
+}
+
+function sNum(num) {
+    return new Intl.NumberFormat('en-GB', { notation: "compact", compactDisplay: "short" }).format(num)
+}
+
+function eYear(txt) {
+    if (!txt) {
+        return '×'
     }
-
-    const config = {
-      method: "GET",
-      url: `https://p.oceansaver.in/ajax/download.php?format=${format}&url=${encodeURIComponent(url)}&api=dfcb6d76f2f6a9894gjkege8a4ab232222`,
-      headers: {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
-      }
-    };
-
-    const response = await axios.request(config);
-    if (response.data?.success) {
-      const { id, title, info } = response.data;
-      const downloadUrl = await ddownr.cekProgress(id);
-      return { id, title, image: info.image, downloadUrl };
-    } else {
-      throw new Error("⛔ No se pudo obtener los detalles del video.");
+    if (txt.includes('month ago')) {
+        var T = txt.replace("month ago", "").trim()
+        var L = 'hace '  + T + ' mes'
+        return L
     }
-  },
-
-  cekProgress: async (id) => {
-    const config = {
-      method: "GET",
-      url: `https://p.oceansaver.in/ajax/progress.php?id=${id}`,
-      headers: {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
-      }
-    };
-
-    while (true) {
-      const response = await axios.request(config);
-      if (response.data?.success && response.data.progress === 1000) {
-        return response.data.download_url;
-      }
-      await new Promise(resolve => setTimeout(resolve, 1500)); // delay cortito para más rapidez
+    if (txt.includes('months ago')) {
+        var T = txt.replace("months ago", "").trim()
+        var L = 'hace ' + T + ' meses'
+        return L
     }
-  }
-};
-
-const handler = async (m, { conn, text, usedPrefix, command }) => {
-  await m.react('🌸');
-
-  if (!text.trim()) return conn.reply(m.chat, `❀ Ingresa un nombre para buscar\n> *Ejemplo:* ${usedPrefix + command} ozuna`, m);
-
-  try {
-    const search = await yts(text);
-    if (!search.all.length) return m.reply("⚠ No se encontraron resultados para tu búsqueda.");
-
-    const videoInfo = search.all[0];
-    const { title, thumbnail, timestamp, views, ago, url } = videoInfo;
-    const vistas = formatViews(views);
-    const thumb = (await conn.getFile(thumbnail))?.data;
-
-    const infoMessage = `✱ *${title}* ❀
-*✦ Duración :* ${timestamp}
-*✦ Vistas :* ${vistas}
-*✦ Canal :* ${videoInfo.author?.name || "Desconocido"}
-* Publicado :* ${ago}
-*✦ Enlace :* ${url}
-`;
-
-    const JT = {
-      contextInfo: {
-        externalAdReply: {
-          title: "✧ ʏᴜʀᴜ ʏᴜʀɪ ✧",
-          body: textbot,
-          mediaType: 1,
-          previewType: 0,
-          mediaUrl: url,
-          sourceUrl: url,
-          thumbnail: thumb,
-          renderLargerThumbnail: true
-        }
-      }
-    };
-
-    await conn.sendMessage(m.chat, {
-      image: { url: thumbnail },
-      caption: infoMessage,
-      ...JT
-    }, { quoted: m });
-
-    await m.react('🕐');
-
-    if (["play", "yta", "ytmp3"].includes(command)) {
-      const api = await ddownr.download(url, "mp3");
-
-      await conn.sendMessage(m.chat, {
-        audio: { url: api.downloadUrl },
-        mimetype: "audio/mpeg",
-        ptt: true,
-        fileName: `${title}.mp3`
-      }, { quoted: m });
-
-    } else if (["play2", "ytv", "ytmp4"].includes(command)) {
-      const sources = [
-        `https://api.siputzx.my.id/api/d/ytmp4?url=${url}`,
-        `https://api.zenkey.my.id/api/download/ytmp4?apikey=zenkey&url=${url}`,
-        `https://axeel.my.id/api/download/video?url=${encodeURIComponent(url)}`,
-        `https://delirius-apiofc.vercel.app/download/ytmp4?url=${url}`
-      ];
-
-      let success = false;
-      for (let source of sources) {
-        try {
-          const res = await fetch(source);
-          const { data, result, downloads } = await res.json();
-          let downloadUrl = data?.dl || result?.download?.url || downloads?.url || data?.download?.url;
-
-          if (downloadUrl) {
-            success = true;
-            await conn.sendMessage(m.chat, {
-              video: { url: downloadUrl },
-              fileName: `${title}.mp4`,
-              mimetype: "video/mp4",
-              caption: "🌸 Aquí tienes tu video descargado por *Yuru Yuri Bot* ✨",
-              thumbnail: thumb
-            }, { quoted: m });
-            break;
-          }
-        } catch (e) {
-          console.error(`⚠ Error con la fuente ${source}:`, e.message);
-        }
-      }
-
-      if (!success) {
-        return m.reply("⛔ *Error:* No se encontró un enlace de descarga válido.");
-      }
-    } else {
-      throw "❌ Comando no reconocido.";
+    if (txt.includes('year ago')) {
+        var T = txt.replace("year ago", "").trim()
+        var L = 'hace ' + T + ' año'
+        return L
     }
-
-  } catch (error) {
-    return m.reply(`⚠ Error inesperado: ${error.message}`);
-  }
-};
-
-handler.command = handler.help = ["play", "ytk"];
-handler.tags = ["downloader"];
-
-export default handler;
-
-function formatViews(views) {
-  if (typeof views !== "number") return "Desconocido";
-  return views >= 1000
-    ? (views / 1000).toFixed(1) + "k (" + views.toLocaleString() + ")"
-    : views.toString();
+    if (txt.includes('years ago')) {
+        var T = txt.replace("years ago", "").trim()
+        var L = 'hace ' + T + ' años'
+        return L
+    }
+    if (txt.includes('hour ago')) {
+        var T = txt.replace("hour ago", "").trim()
+        var L = 'hace ' + T + ' hora'
+        return L
+    }
+    if (txt.includes('hours ago')) {
+        var T = txt.replace("hours ago", "").trim()
+        var L = 'hace ' + T + ' horas'
+        return L
+    }
+    if (txt.includes('minute ago')) {
+        var T = txt.replace("minute ago", "").trim()
+        var L = 'hace ' + T + ' minuto'
+        return L
+    }
+    if (txt.includes('minutes ago')) {
+        var T = txt.replace("minutes ago", "").trim()
+        var L = 'hace ' + T + ' minutos'
+        return L
+    }
+    if (txt.includes('day ago')) {
+        var T = txt.replace("day ago", "").trim()
+        var L = 'hace ' + T + ' dia'
+        return L
+    }
+    if (txt.includes('days ago')) {
+        var T = txt.replace("days ago", "").trim()
+        var L = 'hace ' + T + ' dias'
+        return L
+    }
+    return txt
 }
