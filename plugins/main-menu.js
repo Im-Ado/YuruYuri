@@ -585,7 +585,11 @@ let handler = async (m, { conn, args }) => {
 
   await conn.sendMessage(m.chat, {
     image: { url: banner },
-    caption: captionText
+    caption: captionText,
+    contextInfo: {
+      isForwarded: true,
+      forwardingScore: 9999
+    }
   }, { quoted: m })
 
 }
