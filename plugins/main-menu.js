@@ -1,29 +1,39 @@
 import PhoneNumber from 'awesome-phonenumber';
+
+// Define these variables globally or pass them as arguments if they are not truly global
+// For the purpose of making the provided snippet runnable, I'm defining them here.
+const packname = "Nombre del Paquete"; // You should define packname
+const botname = "Nombre del Bot"; // You should define botname
+const textbot = "Texto de información del bot"; // You should define textbot
+const banner = "URL de la imagen del banner"; // You should define banner URL
+const redes = "URL de tus redes sociales"; // You should define redes URL
+const moneda = "Monedas"; // Define the currency unit
+
 let handler = async (m, { conn, args }) => {
-const regionNames = new Intl.DisplayNames(['es'], { type: 'region' });
+  const regionNames = new Intl.DisplayNames(['es'], { type: 'region' });
 
-function banderaEmoji(countryCode) {
-  if (!countryCode || countryCode.length !== 2) return '';
-  const codePoints = [...countryCode.toUpperCase()]
-    .map(char => 0x1F1E6 + char.charCodeAt(0) - 65);
-  return String.fromCodePoint(...codePoints);
-}
+  function banderaEmoji(countryCode) {
+    if (!countryCode || countryCode.length !== 2) return '';
+    const codePoints = [...countryCode.toUpperCase()]
+      .map(char => 0x1F1E6 + char.charCodeAt(0) - 65);
+    return String.fromCodePoint(...codePoints);
+  }
 
-const number = m.sender.replace('@s.whatsapp.net', '');
-const phoneInfo = PhoneNumber('+' + number);
-const countryCode = phoneInfo.getRegionCode('international');
-const bandera = banderaEmoji(countryCode) || '🌐';
-const pais = regionNames.of(countryCode) || 'Desconocido';
-const mundo = `${bandera} ${pais}`;
-    let userId = m.mentionedJid && m.mentionedJid[0] ? m.mentionedJid[0] : m.sender
-    let user = global.db.data.users[userId]
-    let name = conn.getName(userId)
-    let _uptime = process.uptime() * 1000
-    let uptime = clockString(_uptime)
-    let totalreg = Object.keys(global.db.data.users).length
-    let totalCommands = Object.values(global.plugins).filter((v) => v.help && v.tags).length
+  const number = m.sender.replace('@s.whatsapp.net', '');
+  const phoneInfo = new PhoneNumber('+' + number); // Use 'new' keyword for PhoneNumber
+  const countryCode = phoneInfo.getRegionCode(); // getRegionCode doesn't take 'international' as argument
+  const bandera = banderaEmoji(countryCode) || '🌐';
+  const pais = regionNames.of(countryCode) || 'Desconocido';
+  const mundo = `${bandera} ${pais}`;
+  let userId = m.mentionedJid && m.mentionedJid[0] ? m.mentionedJid[0] : m.sender
+  let user = global.db.data.users[userId]
+  let name = conn.getName(userId)
+  let _uptime = process.uptime() * 1000
+  let uptime = clockString(_uptime)
+  let totalreg = Object.keys(global.db.data.users).length
+  let totalCommands = Object.values(global.plugins).filter((v) => v.help && v.tags).length
 
-    let txt = `
+  let txt = `
 𝐇𝐨𝐥𝐚, @${userId.split('@')[0]}! 𝐒𝐨𝐲 *${packname}*
 ᴀǫᴜɪ ᴛɪᴇɴᴇs ʟᴀ ʟɪsᴛᴀ ᴅᴇ ᴄᴏᴍᴀɴᴅᴏs
 ╭┈ ↷
@@ -127,8 +137,7 @@ const mundo = `${bandera} ${pais}`;
 → Descargar un archivo de MEGA.
 ✦ *#play • #play2 • #playaudio • #playvideo*
 → Descarga música/video de YouTube.
-✦ *#ytmp3 • #ytmp4 • #ytmp4doc* 
-→ Descarga música/video de YouTube mediante url.
+✦ *#ytmp3 • #ytmp4 • #ytmp4doc* → Descarga música/video de YouTube mediante url.
 ✦ *#fb • #facebook*
 → Descarga videos de Facebook.
 ✦ *#twitter • #x* + [Link]
@@ -577,21 +586,23 @@ const mundo = `${bandera} ${pais}`;
 → Juega tres en raya.
   `.trim()
 
-  await conn.sendMessage(m.chat, { 
-  text: txt,
-  contextInfo: {
-    mentionedJid: [m.sender, userId],
-    externalAdReply: {
-      title: botname,
-      body: textbot,
-      thumbnailUrl: banner,
-      sourceUrl: redes,
-      mediaType: 1,
-      showAdAttribution: true,
-      renderLargerThumbnail: true,
+  await conn.sendMessage(m.chat, {
+    text: txt,
+    contextInfo: {
+      mentionedJid: [m.sender, userId],
+      externalAdReply: {
+        title: botname,
+        body: textbot,
+        thumbnailUrl: banner,
+        sourceUrl: redes,
+        mediaType: 1,
+        showAdAttribution: true,
+        renderLargerThumbnail: true,
+      },
     },
-  },
-}, { quoted: m })
+  }, { quoted: m })
+
+}
 
 handler.help = ['menu']
 handler.tags = ['main']
@@ -600,8 +611,8 @@ handler.command = ['menu', 'menú', 'help']
 export default handler
 
 function clockString(ms) {
-    let seconds = Math.floor((ms / 1000) % 60)
-    let minutes = Math.floor((ms / (1000 * 60)) % 60)
-    let hours = Math.floor((ms / (1000 * 60 * 60)) % 24)
-    return `${hours}h ${minutes}m ${seconds}s`
+  let seconds = Math.floor((ms / 1000) % 60)
+  let minutes = Math.floor((ms / (1000 * 60)) % 60)
+  let hours = Math.floor((ms / (1000 * 60 * 60)) % 24)
+  return `${hours}h ${minutes}m ${seconds}s`
 }
