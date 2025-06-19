@@ -16,21 +16,21 @@ let handler = async function (m, { conn, text, usedPrefix, command }) {
   const name2 = conn.getName(m.sender)
 
   if (user.registered) {
-    return m.reply(`✦.── Ya estás Registrado ──.✦\n\n¿Deseas volver a registrarte?\nUtiliza *${usedPrefix}unreg* para borrar tu registro.`, null, global.rcanal)
+    return m.reply(`✦.── Ya estás Registrado ──.✦\n\n¿Deseas volver a registrarte?\nUtiliza *${usedPrefix}unreg* para borrar tu registro.`)
   }
 
   if (!Reg.test(text)) {
-    return m.reply(`✦.── Formato Incorrecto ──.✦\n\nUso correcto:\n*${usedPrefix + command} nombre.edad*\nEjemplo:\n*${usedPrefix + command} ${name2}.18*`, null, global.rcanal)
+    return m.reply(`✦.── Formato Incorrecto ──.✦\n\nUso correcto:\n*${usedPrefix + command} nombre.edad*\nEjemplo:\n*${usedPrefix + command} ${name2}.18*`)
   }
 
   let [_, name, __, age] = text.match(Reg)
-  if (!name) return m.reply('✦.── Error ──.✦\n\n𔖲𔖮𔖭 El nombre no puede estar vacío.', null, global.rcanal)
-  if (!age) return m.reply('✦.── Error ──.✦\n\n𔖲𔖮𔖭 La edad no puede estar vacía.', null, global.rcanal)
-  if (name.length >= 100) return m.reply('✦.── Nombre muy largo ──.✦\n\n𔖲𔖮𔖭 El nombre no debe tener más de 100 caracteres.', null, global.rcanal)
+  if (!name) return m.reply('✦.── Error ──.✦\n\n𔖲𔖮𔖭 El nombre no puede estar vacío.')
+  if (!age) return m.reply('✦.── Error ──.✦\n\n𔖲𔖮𔖭 La edad no puede estar vacía.')
+  if (name.length >= 100) return m.reply('✦.── Nombre muy largo ──.✦\n\n𔖲𔖮𔖭 El nombre no debe tener más de 100 caracteres.')
 
   age = parseInt(age)
-  if (age > 1000) return m.reply('✦.── Edad demasiado alta ──.✦\n\n𔖲𔖮𔖭 Wow, el abuelo quiere jugar con el bot.', null, global.rcanal)
-  if (age < 5) return m.reply('✦.── Edad muy baja ──.✦\n\n𔖲𔖮𔖭 ¿Un bebé usando bots? Jsjs', null, global.rcanal)
+  if (age > 1000) return m.reply('✦.── Edad demasiado alta ──.✦\n\n𔖲𔖮𔖭 Wow, el abuelo quiere jugar con el bot.')
+  if (age < 5) return m.reply('✦.── Edad muy baja ──.✦\n\n𔖲𔖮𔖭 ¿Un bebé usando bots? Jsjs')
 
   // Registro
   user.name = `${name}✓`.trim()
@@ -61,8 +61,7 @@ let handler = async function (m, { conn, text, usedPrefix, command }) {
   await m.react('🔥')
 
   await conn.sendMessage(m.chat, {
-    text: regbot,
-    ...global.rcanal
+    text: regbot
   }, { quoted: m })
 
   // Notificación al grupo oficial
@@ -87,8 +86,7 @@ let handler = async function (m, { conn, text, usedPrefix, command }) {
       const ppGroup = await conn.profilePictureUrl(who, 'image').catch(() => pp)
       await global.conn.sendMessage(grupoNotificacion, {
         image: { url: ppGroup || pp },
-        caption: mensajeNotificacion,
-        ...global.rcanal
+        caption: mensajeNotificacion
       })
     }
   } catch (e) {
