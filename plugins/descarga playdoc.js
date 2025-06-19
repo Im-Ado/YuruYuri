@@ -1,114 +1,79 @@
-import fetch from 'node-fetch'
-import yts from 'yt-search'
+import fetch from 'node-fetch';
 
-let handler = async (m, { conn: star, command, args, text, usedPrefix }) => {
-  if (!text) return m.reply('Ingresa el título de un video o canción de *YouTube*.\n\n`Ejemplo:`\n' + `> *${usedPrefix + command}* La vaca `)
-    await m.react('🕓')
+const SEARCH_APIS = [
+  { name: 'Servidor Vreden', url: 'http://api.alyabot.xyz:3269/search_youtube?query=' },
+  { name: 'Servidor Delirius', url: 'http://api2.alyabot.xyz:5216/search_youtube?query=' },
+  { name: 'Servidor Stellar', url: 'https://api3.alyabot.xyz/search_youtube?query=' }
+];
+
+const DOWNLOAD_APIS = [
+  { name: 'Servidor Masha', url: 'http://api.alyabot.xyz:3269/download_audio?url=' },
+  { name: 'Servidor Alya', url: 'http://api2.alyabot.xyz:5216/download_audio?url=' },
+  { name: 'Servidor Masachika', url: 'https://api3.alyabot.xyz/download_audio?url=' }
+];
+
+async function tryFetchJSON(servers, query) {
+  for (let server of servers) {
     try {
-    let res = await search(args.join(" "))
-    let img = await (await fetch(`${res[0].image}`)).buffer()
-    let txt = '`乂  Y O U T U B E  -  P L A Y`\n\n'
-       txt += `\t\t*✿ *${res[0].title}* ✿\n`
-       txt += `\t\t*✧ Duración* = ${secondString(res[0].duration.seconds)}\n`
-       txt += `\t\t*✧ Publicado* = ${eYear(res[0].ago)}\n`
-       txt += `\t\t*✧ Canal* = ${res[0].author.name || 'Desconocido'}\n`
-       txt += `\t\t*✧ ID* = ${res[0].videoId}\n`
-       txt += `\t\t*✧ Url* = ${'https://youtu.be/' + res[0].videoId}\n\n`
-       txt += `> Para descargar responde a este mensaje con *Video* o *Audio*.`
-await star.sendFile(m.chat, img, 'thumbnail.jpg', txt, m)
-await m.react('✅')
-} catch {
-await m.react('✖️')
-}}
-handler.help = ['play *<búsqueda>*']
-handler.tags = ['downloader']
-handler.command = ['play']
-handler.register = true 
-export default handler
-
-async function search(query, options = {}) {
-  let search = await yts.search({ query, hl: "es", gl: "ES", ...options })
-  return search.videos
+      const res = await fetch(server.url + encodeURIComponent(query));
+      if (!res.ok) continue;
+      const json = await res.json();
+      if (json && Object.keys(json).length) return { json, serverName: server.name };
+    } catch {
+      continue;
+    }
+  }
+  return { json: null, serverName: null };
 }
 
-function MilesNumber(number) {
-  let exp = /(\d)(?=(\d{3})+(?!\d))/g
-  let rep = "$1."
-  let arr = number.toString().split(".")
-  arr[0] = arr[0].replace(exp, rep)
-  return arr[1] ? arr.join(".") : arr[0]
-}
+let handler = async (m, { text, conn, command, usedPrefix }) => {
+  if (!text) return m.reply(`✐ Ingresa Un Texto Para Buscar En Youtube\n> *Ejemplo:* ${usedPrefix + command} ozuna`);
 
-function secondString(seconds) {
-  seconds = Number(seconds);
-  const d = Math.floor(seconds / (3600 * 24));
-  const h = Math.floor((seconds % (3600 * 24)) / 3600);
-  const m = Math.floor((seconds % 3600) / 60);
-  const s = Math.floor(seconds % 60);
-  const dDisplay = d > 0 ? d + (d == 1 ? ' Día, ' : ' Días, ') : '';
-  const hDisplay = h > 0 ? h + (h == 1 ? ' Hora, ' : ' Horas, ') : '';
-  const mDisplay = m > 0 ? m + (m == 1 ? ' Minuto, ' : ' Minutos, ') : '';
-  const sDisplay = s > 0 ? s + (s == 1 ? ' Segundo' : ' Segundos') : '';
-  return dDisplay + hDisplay + mDisplay + sDisplay;
-}
+  try {
+    const { json: searchJson, serverName: searchServer } = await tryFetchJSON(SEARCH_APIS, text);
 
-function sNum(num) {
-    return new Intl.NumberFormat('en-GB', { notation: "compact", compactDisplay: "short" }).format(num)
-}
+    if (!searchJson || !searchJson.results || !searchJson.results.length) {  
+      return m.reply('❌ No se encontraron resultados.');
+    }
 
-function eYear(txt) {
-    if (!txt) {
-        return '×'
+    const video = searchJson.results[0];
+    const thumb = video.thumbnails.find(t => t.width === 720)?.url || video.thumbnails[0]?.url;
+    const videoTitle = video.title;
+    const videoUrl = video.url;
+    const duration = Math.floor(video.duration);
+    const views = video.views.toLocaleString();
+    const channel = video.channel;
+
+    let txt = `*「✦」 ${videoTitle}*\n\n` +
+      `> ✦ Canal » ${channel}\n` +
+      `ⴵ Duración: » ${duration}s\n` +
+      `✰ Vistas: » ${views}\n` +
+      `🜸 Link: » ${videoUrl}\n` +
+      `❒ Servidor: » ${searchServer || 'Desconocido'}`;
+
+    await conn.sendMessage(m.chat, { image: { url: thumb }, caption: txt }, { quoted: m });
+
+    const { json: downloadJson } = await tryFetchJSON(DOWNLOAD_APIS, videoUrl);
+
+    if (!downloadJson || !downloadJson.file_url) {
+      return m.reply('❌ No se pudo obtener el audio');
     }
-    if (txt.includes('month ago')) {
-        var T = txt.replace("month ago", "").trim()
-        var L = 'hace '  + T + ' mes'
-        return L
-    }
-    if (txt.includes('months ago')) {
-        var T = txt.replace("months ago", "").trim()
-        var L = 'hace ' + T + ' meses'
-        return L
-    }
-    if (txt.includes('year ago')) {
-        var T = txt.replace("year ago", "").trim()
-        var L = 'hace ' + T + ' año'
-        return L
-    }
-    if (txt.includes('years ago')) {
-        var T = txt.replace("years ago", "").trim()
-        var L = 'hace ' + T + ' años'
-        return L
-    }
-    if (txt.includes('hour ago')) {
-        var T = txt.replace("hour ago", "").trim()
-        var L = 'hace ' + T + ' hora'
-        return L
-    }
-    if (txt.includes('hours ago')) {
-        var T = txt.replace("hours ago", "").trim()
-        var L = 'hace ' + T + ' horas'
-        return L
-    }
-    if (txt.includes('minute ago')) {
-        var T = txt.replace("minute ago", "").trim()
-        var L = 'hace ' + T + ' minuto'
-        return L
-    }
-    if (txt.includes('minutes ago')) {
-        var T = txt.replace("minutes ago", "").trim()
-        var L = 'hace ' + T + ' minutos'
-        return L
-    }
-    if (txt.includes('day ago')) {
-        var T = txt.replace("day ago", "").trim()
-        var L = 'hace ' + T + ' dia'
-        return L
-    }
-    if (txt.includes('days ago')) {
-        var T = txt.replace("days ago", "").trim()
-        var L = 'hace ' + T + ' dias'
-        return L
-    }
-    return txt
-}
+
+    let audioUrl = downloadJson.file_url;
+
+    await conn.sendMessage(m.chat, {
+      audio: { url: audioUrl },
+      mimetype: 'audio/mpeg',
+      ptt: true,
+      fileName: `${videoTitle}.mp3`,
+    }, { quoted: m });
+
+  } catch (e) {
+    console.error(e);
+    m.reply(`❌ Error: ${e.message}`);
+    m.react('✖️');
+  }
+};
+
+handler.command = ['play', 'mp3', 'ytmp3', 'playmp3'];
+export default handler;
