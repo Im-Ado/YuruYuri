@@ -32,7 +32,7 @@
 "license": "MIT-License",
 "dependencies": {
 "@StarlightsTeam/Scraper": "github:Ado926/Starlights-Scraper",
-"@whiskeysockets/baileys": "github:Ado926/MikiBai",
+"@whiskeysockets/baileys": "github:Ado926/Xz",
 "@adiwajshing/keyed-db": "^0.2.4",
 "@bochilteam/scraper": "^4.2.4",
 "@bochilteam/scraper-sosmed": "^1.0.5",
