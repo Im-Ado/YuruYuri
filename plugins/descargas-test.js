@@ -72,7 +72,7 @@ author = author || 'no encontrado'
     return m.reply(`⚠︎ Ocurrió un error: ${error}`)
   }
 }
-handler.command = handler.help = ['yta', 'ytp']
+handler.command = handler.help = ['mp4' 'ytmp4']
 handler.tags = ['descargas']
 handler.group = false 
 
