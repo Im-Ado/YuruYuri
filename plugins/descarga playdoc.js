@@ -9,7 +9,7 @@ const JT = {
       previewType: 0,
       mediaUrl: null,
       sourceUrl: null,
-      thumbnail: thumb,
+      thumbnail: img,
       renderLargerThumbnail: true,
     },
   },
