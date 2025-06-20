@@ -3,10 +3,7 @@
 // Deja créditos
 import fetch from "node-fetch"
 
-
-
 let isDownloadingArtist = false
-
 
 async function downloadTrack(youtubeUrl) {
   const encodedUrl = encodeURIComponent(youtubeUrl)
@@ -123,77 +120,20 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
 
   if (isDownloadingArtist) {
     return conn.sendMessage(m.chat, {
-      text: "⚠️ ¡Ya hay una descarga en curso! No interrumpas el proceso.",
-      contextInfo: {
-        isForwarded: true,
-        forwardingScore: 999,
-        forwardedNewsletterMessageInfo: {
-          newsletterJid: channelRD.id,
-          serverMessageId: 100,
-          newsletterName: channelRD.name,
-        },
-        externalAdReply: {
-          showAdAttribution: true,
-          title: packname,
-          body: dev,
-          previewType: "PHOTO",
-          thumbnailUrl: icono,
-          sourceUrl: redes,
-          mediaType: 1,
-          renderLargerThumbnail: false
-        }
-      }
+      text: "⚠️ ¡Ya hay una descarga en curso! No interrumpas el proceso."
     })
   }
 
   if (!text || text.trim().length === 0) {
     return conn.sendMessage(m.chat, {
-      text: `⚠️ *¡Atención!*\n\n💡 Debes proporcionar el nombre del artista.\n📌 Ejemplo: ${usedPrefix}artista TWICE`,
-      contextInfo: {
-        isForwarded: true,
-        forwardingScore: 999,
-        forwardedNewsletterMessageInfo: {
-          newsletterJid: channelRD.id,
-          serverMessageId: 100,
-          newsletterName: channelRD.name,
-        },
-        externalAdReply: {
-          showAdAttribution: true,
-          title: packname,
-          body: dev,
-          previewType: "PHOTO",
-          thumbnailUrl: icono,
-          sourceUrl: redes,
-          mediaType: 1,
-          renderLargerThumbnail: false
-        }
-      }
+      text: `⚠️ *¡Atención!*\n\n💡 Debes proporcionar el nombre del artista.\n📌 Ejemplo: ${usedPrefix}artista TWICE`
     })
   }
 
   isDownloadingArtist = true
 
   await conn.sendMessage(m.chat, {
-    text: "🔔 *Iniciando descarga de música por artista.*\n\n⏳ Por favor, no interrumpas el proceso.",
-    contextInfo: {
-      isForwarded: true,
-      forwardingScore: 999,
-      forwardedNewsletterMessageInfo: {
-        newsletterJid: channelRD.id,
-        serverMessageId: 100,
-        newsletterName: channelRD.name,
-      },
-      externalAdReply: {
-        showAdAttribution: true,
-        title: packname,
-        body: dev,
-        previewType: "PHOTO",
-        thumbnailUrl: icono,
-        sourceUrl: redes,
-        mediaType: 1,
-        renderLargerThumbnail: false
-      }
-    }
+    text: "🔔 *Iniciando descarga de música por artista.*\n\n⏳ Por favor, no interrumpas el proceso."
   })
 
   const searchUrl = `https://delirius-apiofc.vercel.app/search/searchtrack?q=${encodeURIComponent(text)}`
@@ -204,51 +144,13 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
     if (!Array.isArray(searchResults) || searchResults.length === 0) {
       isDownloadingArtist = false
       return conn.sendMessage(m.chat, {
-        text: "⚠️ No se encontraron resultados para ese artista.",
-        contextInfo: {
-          isForwarded: true,
-          forwardingScore: 999,
-          forwardedNewsletterMessageInfo: {
-            newsletterJid: channelRD.id,
-            serverMessageId: 100,
-            newsletterName: channelRD.name,
-          },
-          externalAdReply: {
-            showAdAttribution: true,
-            title: packname,
-            body: dev,
-            previewType: "PHOTO",
-            thumbnailUrl: icono,
-            sourceUrl: redes,
-            mediaType: 1,
-            renderLargerThumbnail: false
-          }
-        }
+        text: "⚠️ No se encontraron resultados para ese artista."
       })
     }
   } catch (error) {
     isDownloadingArtist = false
     return conn.sendMessage(m.chat, {
-      text: `❌ *Error al buscar música:* ${error.message || "Desconocido"}`,
-      contextInfo: {
-        isForwarded: true,
-        forwardingScore: 999,
-        forwardedNewsletterMessageInfo: {
-          newsletterJid: channelRD.id,
-          serverMessageId: 100,
-          newsletterName: channelRD.name,
-        },
-        externalAdReply: {
-          showAdAttribution: true,
-          title: packname,
-          body: dev,
-          previewType: "PHOTO",
-          thumbnailUrl: icono,
-          sourceUrl: redes,
-          mediaType: 1,
-          renderLargerThumbnail: false
-        }
-      }
+      text: `❌ *Error al buscar música:* ${error.message || "Desconocido"}`
     })
   }
 
@@ -262,26 +164,7 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
         mimetype: "audio/mpeg",
         fileName: `${title}.mp3`,
         ptt: true, 
-        caption: `🎶 *${track.title}*\n👤 *Artista:* ${track.artist}\n💽 *Álbum:* ${track.album || "Desconocido"}`,
-        contextInfo: {
-          isForwarded: true,
-          forwardingScore: 999,
-          forwardedNewsletterMessageInfo: {
-            newsletterJid: channelRD.id,
-            serverMessageId: 100,
-            newsletterName: channelRD.name,
-          },
-          externalAdReply: {
-            showAdAttribution: true,
-            title: packname,
-            body: dev,
-            previewType: "PHOTO",
-            thumbnailUrl: icono,
-            sourceUrl: redes,
-            mediaType: 1,
-            renderLargerThumbnail: false
-          }
-        }
+        caption: `🎶 *${track.title}*\n👤 *Artista:* ${track.artist}\n💽 *Álbum:* ${track.album || "Desconocido"}`
       }, { quoted: m })
       await new Promise(resolve => setTimeout(resolve, 500))
     } catch (error) {
@@ -293,26 +176,7 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
   isDownloadingArtist = false
 
   await conn.sendMessage(m.chat, {
-    text: "✅ *Descargas Finalizadas Exitosamente.*",
-    contextInfo: {
-      isForwarded: true,
-      forwardingScore: 999,
-      forwardedNewsletterMessageInfo: {
-        newsletterJid: channelRD.id,
-        serverMessageId: 100,
-        newsletterName: channelRD.name,
-      },
-      externalAdReply: {
-        showAdAttribution: true,
-        title: packname,
-        body: dev,
-        previewType: "PHOTO",
-        thumbnailUrl: icono,
-        sourceUrl: redes,
-        mediaType: 1,
-        renderLargerThumbnail: false
-      }
-    }
+    text: "✅ *Descargas Finalizadas Exitosamente.*"
   })
 }
 
