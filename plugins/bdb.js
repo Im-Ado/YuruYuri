@@ -20,12 +20,12 @@ let handler = async (m, { conn, usedPrefix, command, text }) => {
 
     const video = searchData.data[0];
 
-    let txt = `*「✦」 ${video.title}*\n\n` +
-      `> ✦ Canal » ${video.author.name}\n` +
-      `ⴵ Duración: » ${video.duration}\n` +
-      `✰ Vistas: » ${video.views}\n` +
-      `✐ Publicado: » ${video.publishedAt}\n` +
-      `🜸 Link: » ${video.url}`;
+    let txt = `*「✧」 ${video.title}*\n\n` +
+      `*✦ Canal »* ${video.author.name}\n` +
+      `*ⴵ Duración: »* ${video.duration}\n` +
+      `*✰ Vistas: »* ${video.views}\n` +
+      `*✐ Publicado: »* ${video.publishedAt}\n` +
+      `*🜸 Link: »* ${video.url}`;
 
     await conn.sendMessage(m.chat, {
       image: { url: video.image },
@@ -52,12 +52,12 @@ let handler = async (m, { conn, usedPrefix, command, text }) => {
 
   } catch (error) {
     console.error(error);
-    await m.react('🔴');
+    await m.react('🌿');
     m.reply(`❌ Error: ${error.message}`);
   }
 };
 
-handler.command = ['play1'];
+handler.command = ['play', 'playaudio'];
 handler.help = ['play <texto>', 'playaudio <texto>'];
 handler.tags = ['media'];
 
