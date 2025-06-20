@@ -1,12 +1,10 @@
-// ⁱ𝔇ĕ𝐬†𝓻⊙γ𒆜 -  >> https://github.com/The-King-Destroy
-
 let handler = async (m, { text, usedPrefix, command }) => {
     const userId = m.sender;
 
     if (command === 'setmeta') {
         const packParts = text.split(/[\u2022|]/).map(part => part.trim());
         if (packParts.length < 2) {
-            return m.reply(`${emoji} Por favor, escribe el pack y el autor que deseas usar por defecto para tus stickers.\n> Ejemplo: *${usedPrefix + command} YukiBot-MD • By Destroy*`);
+            return m.reply(`${emoji} Por favor, escribe el pack y el autor que deseas usar por defecto para tus stickers.\n> Ejemplo: *${usedPrefix + command} ${global.botname} • By Wirk*`);
         }
 
         const packText1 = packParts[0];
@@ -52,29 +50,3 @@ handler.register = true
 handler.group = true
 
 export default handler;
-
-/*const handler = async (m, { text, usedPrefix, command }) => {
-try {
-const metaParts = text.split(/\s/).map(part => part.trim())
-if (metaParts.length < 2) {
-return m.reply(`🚀 Escribe el pack y el autor que deseas usar por defecto para tus stickers\n> Ejemplo: *${usedPrefix + command} Star Author*`)
-}
-const packName = metaParts[0]
-const authorName = metaParts[1]
-if (!global.db.data.users[m.sender]) {
-global.db.data.users[m.sender] = {}
-}
-const { packstickers, packstickers2 } = global.db.data.users[m.sender]
-packstickers = packName
-packstickers2 = authorName
-await global.db.write()
-return m.reply(`✨ ¡Tus metadatos de stickers han sido actualizados con éxito! Pack: ${packName} | Autor: ${authorName}`)
-} catch (e) {
-await m.reply(`🚨 Ocurrió un problema al actualizar los ajustes: ${e}`)
-}}
-
-handler.help = ['setmeta']
-handler.tags = ['tools']
-handler.command = ['setmeta']
-
-export default handler*/
