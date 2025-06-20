@@ -80,7 +80,7 @@ let handler = async function (m, { conn, text, usedPrefix, command }) {
     caption: regbot,
     contextInfo: {
       externalAdReply: {
-        title: `✦ 𝗥𝗘𝗚𝗜𝗦𝗧𝗥𝗢 𝗖𝗢𝗠𝗣𝗟𝗘𝗧𝗔𝗗𝗢✦`,
+        title: `✦ 𝗥𝗘𝗚𝗜𝗦𝗧𝗥𝗢 𝗖𝗢𝗠𝗣𝗟𝗘𝗧𝗔𝗗𝗢 ✦`,
         body: `🎀 Nombre: ${name} | Edad: ${age} 🎀`,
         thumbnailUrl: pp,
         sourceUrl: `https://wa.me/${m.sender.split('@')[0]}`,
