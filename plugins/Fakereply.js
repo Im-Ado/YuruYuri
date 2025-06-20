@@ -32,7 +32,7 @@ m.reply("❌ Error\nNo se pudo reaccionar. Revisa el enlace o tu conexión.")
 }
 }
 
-handler.command = ['reactch', 'rch']
+handler.command = ['reactx', 'rch']
 handler.tags = ['tools']
 handler.help = ['reactch <link>|<texto>']
 handler.owner = true
