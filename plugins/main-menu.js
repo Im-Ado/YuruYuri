@@ -86,6 +86,8 @@ let handler = async (m, { conn, args }) => {
 
 ✦ *#artista*
 → Buscador de música de tu artista fav. 
+✦ *#peli*
+→ Muestra detalles de la película que solicites, por nombre.
 ✦ *#tiktoksearch • #tiktoks*
 → Buscador de videos de tiktok.
 ✦ *#tweetposts*
