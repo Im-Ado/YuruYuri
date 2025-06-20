@@ -38,7 +38,7 @@ ${comienzo} 𝗣 𝗘 𝗟 Í 𝗖 𝗨 𝗟 𝗔 𝗦 ${fin}
   await conn.sendMessage(
     m.chat,
     {
-      image: { url: x.Poster || 'https://files.catbox.moe/xr2m6u.jpg' },
+      image: { url: x.Poster || 'https://raw.githubusercontent.com/Ado926/WirksiBoxFiles/main/1750456016631-xuhk7q-1750455994995-97f8e6.jpg' },
       caption: mov_txt.trim(),
       mentions: [m.sender],
     },
