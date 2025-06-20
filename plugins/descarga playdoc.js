@@ -80,5 +80,5 @@ let handler = async (m, { text, conn, command, usedPrefix }) => {
   }
 };
 
-handler.command = ['play', 'mp3', 'ytmp3', 'playmp3'];
+handler.command = ['ytmp3', 'playmp3'];
 export default handler;
