@@ -10,7 +10,12 @@ const Reg = /\|?(.*)([.|] *?)([0-9]*)$/i
 function getNumberFromJid(jid) {
   if (!jid) return 'Desconocido'
   if (typeof jid !== 'string') return 'Desconocido'
-  if (jid.includes('@s.whatsapp.net')) return jid.split('@')[0]
+  if (jid.includes('@s.whatsapp.net')) {
+    const number = jid.split('@')[0]
+    const pn = new PhoneNumber(number, 'HN') // Cambia 'HN' por el código que quieras
+    if (pn.isValid()) return pn.getNumber('international') // +504 XXXXXXX
+    return '+' + number
+  }
   return 'Desconocido'
 }
 
@@ -23,7 +28,7 @@ let handler = async function (m, { conn, text, usedPrefix, command }) {
   const name2 = conn.getName(m.sender)
 
   if (user.registered) {
-    return m.reply(`✦.── Ya estás Registrado ──.✦\n\n¿Deseas volver a registrarte?\nUtiliza *${usedPrefix}unreg* para borrar tu registro.`)
+    return m.reply(`✦.── Ya estás Registrado ──.✦\n\n¿Quieres volver a registrarte?\nUsa *${usedPrefix}unreg* para borrar tu registro.`)
   }
 
   if (!Reg.test(text)) {
@@ -51,8 +56,8 @@ let handler = async function (m, { conn, text, usedPrefix, command }) {
 
   const sn = createHash('md5').update(m.sender).digest('hex').slice(0, 20)
 
-  // Asumo que "moneda" está definida global o en otro lado, si no la defines acá
-  const moneda = '⛁' // o la que uses
+  // Si no tienes definida "moneda", defínela acá
+  const moneda = '⛁'
 
   const regbot = `
 ✦ 𝗥 𝗘 𝗚 𝗜 𝗦 𝗧 𝗥 𝗔 𝗗 𝗢 ✦
@@ -75,7 +80,7 @@ let handler = async function (m, { conn, text, usedPrefix, command }) {
     caption: regbot,
     contextInfo: {
       externalAdReply: {
-        title: `✦ Registro Completado ✦`,
+        title: `✦ 𝗥𝗘𝗚𝗜𝗦𝗧𝗥𝗢 𝗖𝗢𝗠𝗣𝗟𝗘𝗧𝗔𝗗𝗢✦`,
         body: `🎀 Nombre: ${name} | Edad: ${age} 🎀`,
         thumbnailUrl: pp,
         sourceUrl: `https://wa.me/${m.sender.split('@')[0]}`,
@@ -89,14 +94,14 @@ let handler = async function (m, { conn, text, usedPrefix, command }) {
   // Notificación al grupo oficial
   const grupoNotificacion = '120363401533528804@g.us'
   const mensajeNotificacion = `
-「✧」 𝗡𝗨𝗘𝗩𝗢 𝗥𝗘𝗚𝗜𝗦𝗧𝗥𝗢 「✧」
+✦ 𝗡𝗨𝗘𝗩𝗢 𝗥𝗘𝗚𝗜𝗦𝗧𝗥𝗢 ✦
 •━━━━━━◇━━━━━━•
-> ♥︎ Nombre » *${name}*
+> ᰔᩚ Nombre » *${name}*
 > ✎ Edad » *${age} añitos*
-> ✦ ID » *${sn}*
-> 📱 Número » *${getNumberFromJid(who)}*
+> ❀ ID » *${sn}*
+> ✰ Número » *${getNumberFromJid(who)}*
 •━━━━━━◇━━━━━━•
-❀ Recompensas:
+❀ 𝗥𝗲𝗰𝗼𝗺𝗽𝗲𝗻𝘀𝗮𝘀:
 > • ⛁ *${moneda}* » +46
 > • ✰ *Experiencia* » +310
 > • ❖ *Tokens* » +25
@@ -109,7 +114,18 @@ let handler = async function (m, { conn, text, usedPrefix, command }) {
       const ppGroup = await conn.profilePictureUrl(who, 'image').catch(() => pp)
       await global.conn.sendMessage(grupoNotificacion, {
         image: { url: ppGroup || pp },
-        caption: mensajeNotificacion
+        caption: mensajeNotificacion,
+        contextInfo: {
+          externalAdReply: {
+            title: `✦ 𝗡𝗘𝗪 𝗨𝗦𝗘𝗥 ✦`,
+            body: `• 🍨 Nombre: *${name}*\n• ☕ Edad: *${age} añitos*`,
+            thumbnailUrl: ppGroup || pp,
+            mediaType: 1,
+            sourceUrl: `https://wa.me/${who.split('@')[0]}`,
+            renderLargerThumbnail: false,
+            showAdAttribution: false
+          }
+        }
       })
     }
   } catch (e) {
