@@ -1,50 +1,39 @@
-// creado por Fantom5700 función que reacciona en canales con letras decoradas
+import fetch from 'node-fetch'
+import fs from 'fs'
 
-const font2 = {
-  a: '🅐', b: '🅑', c: '🅒', d: '🅓', e: '🅔', f: '🅕', g: '🅖',
-  h: '🅗', i: '🅘', j: '🅙', k: '🅚', l: '🅛', m: '🅜', n: '🅝',
-  o: '🅞', p: '🅟', q: '🅠', r: '🅡', s: '🅢', t: '🅣', u: '🅤',
-  v: '🅥', w: '🅦', x: '🅧', y: '🅨', z: '🅩'
-}
+const handler = async (m, { conn, args, usedPrefix, command }) => {
+  if (!args[0]) return m.reply(`🌐 *Ingresa una URL válida para extraer el HTML*\n\n📌 *Ejemplo:*\n${usedPrefix + command} https://example.com`)
 
-const handler = async (m, { conn, text }) => {
-  if (!text.includes('|')) {
-    return m.reply(
-      '❌ Formato incorrecto.\n\nUsa:\n.reactch https://whatsapp.com/channel/abc/123|Hola Mundo'
-    )
-  }
-
-  let [link, ...messageParts] = text.split('|')
-  link = link.trim()
-  const msg = messageParts.join('|').trim().toLowerCase()
-
-  if (!link.startsWith('https://whatsapp.com/channel/')) {
-    return m.reply('❌ El enlace no es válido.\nDebe comenzar con: https://whatsapp.com/channel/')
-  }
-
-  const emoji = msg
-    .split('')
-    .map(c => (c === ' ' ? '―' : font2[c] || c))
-    .join('')
+  const url = args[0]
+  const api = `https://delirius-apiofc.vercel.app/tools/htmlextract?url=${encodeURIComponent(url)}`
 
   try {
-    const parts = link.split('/')
-    const channelId = parts[4]
-    const messageId = parts[5]
+    const res = await fetch(api)
+    if (!res.ok) throw '❌ Error al obtener HTML'
 
-    const res = await conn.newsletterMetadata('invite', channelId)
-    await conn.newsletterReactMessage(res.id, messageId, emoji)
+    const json = await res.json()
+    const html = json.result
 
-    m.reply(`✅ Reacción enviada como: *${emoji}*\nCanal: *${res.name}*`)
+    const fileName = `html-${Date.now()}.html`
+    const filePath = `/tmp/${fileName}`
+    fs.writeFileSync(filePath, html)
+
+    await conn.sendMessage(m.chat, {
+      document: { url: filePath },
+      mimetype: 'text/html',
+      fileName: fileName,
+      caption: `🧩 *HTML EXTRAÍDO COMPLETAMENTE*\n\n🌐 URL: ${url}\n📄 Archivo: ${fileName}\n\n${botname}`
+    }, { quoted: m })
+
   } catch (e) {
     console.error(e)
-    m.reply('❌ Error\nNo se pudo reaccionar. Revisa el enlace o tu conexión.')
+    m.reply(`❌ No se pudo extraer el HTML.\n🔁 Asegúrate de que la URL esté activa y sea válida.`)
   }
 }
 
-handler.command = ['reactch', 'rch']
+handler.help = ['htmlget <url>']
 handler.tags = ['tools']
-handler.help = ['reactch <link>|<texto>']
-handler.owner = true
+handler.command = ['htmlget', 'gethtml', 'extrhtml']
+handler.register = true
 
 export default handler
