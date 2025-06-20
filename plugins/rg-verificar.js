@@ -7,6 +7,13 @@ import moment from 'moment-timezone'
 
 const Reg = /\|?(.*)([.|] *?)([0-9]*)$/i
 
+function getNumberFromJid(jid) {
+  if (!jid) return 'Desconocido'
+  if (typeof jid !== 'string') return 'Desconocido'
+  if (jid.includes('@s.whatsapp.net')) return jid.split('@')[0]
+  return 'Desconocido'
+}
+
 let handler = async function (m, { conn, text, usedPrefix, command }) {
   const who = m.mentionedJid?.[0] || (m.fromMe ? conn.user.jid : m.sender)
   const mentionedJid = [who]
@@ -44,6 +51,9 @@ let handler = async function (m, { conn, text, usedPrefix, command }) {
 
   const sn = createHash('md5').update(m.sender).digest('hex').slice(0, 20)
 
+  // Asumo que "moneda" está definida global o en otro lado, si no la defines acá
+  const moneda = '⛁' // o la que uses
+
   const regbot = `
 ✦ 𝗥 𝗘 𝗚 𝗜 𝗦 𝗧 𝗥 𝗔 𝗗 𝗢 ✦
 •━━━━━━◇━━━━━━•
@@ -65,7 +75,7 @@ let handler = async function (m, { conn, text, usedPrefix, command }) {
     caption: regbot,
     contextInfo: {
       externalAdReply: {
-        title: `✦ Registro completado ✦`,
+        title: `✦ Registro Completado ✦`,
         body: `🎀 Nombre: ${name} | Edad: ${age} 🎀`,
         thumbnailUrl: pp,
         sourceUrl: `https://wa.me/${m.sender.split('@')[0]}`,
@@ -84,6 +94,7 @@ let handler = async function (m, { conn, text, usedPrefix, command }) {
 > ♥︎ Nombre » *${name}*
 > ✎ Edad » *${age} añitos*
 > ✦ ID » *${sn}*
+> 📱 Número » *${getNumberFromJid(who)}*
 •━━━━━━◇━━━━━━•
 ❀ Recompensas:
 > • ⛁ *${moneda}* » +46
