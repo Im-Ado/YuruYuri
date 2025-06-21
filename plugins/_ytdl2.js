@@ -1,11 +1,12 @@
 import fetch from 'node-fetch';
 
 let handler = async (m, { conn, text, usedPrefix, command }) => {
-  if (!text) return m.reply(`📽️ Ingresa el nombre o enlace de un video para buscar.\n\nEjemplo:\n${usedPrefix + command} Feid - LUNA`);
+  if (!text) return m.reply(`🌴 Pon el nombre o link de un video para buscar.\nEjemplo:\n${usedPrefix + command} Rick Astley`);
 
   try {
-    await m.react('🔎');
+    await m.react('🕒');
 
+    // Llamamos tu API con el texto o link
     const res = await fetch(`https://theadonix-api.vercel.app/api/ytmp4?query=${encodeURIComponent(text)}`);
     const data = await res.json();
 
@@ -16,26 +17,30 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
 
     const { title, video, thumbnail, filename, creator, duration, url } = data.result;
 
-    const caption = `*「🎞️ YTMP4 - Video Descargado」*\n\n` +
-      `*🎬 Título:* ${title}\n` +
-      `*⏱️ Duración:* ${duration}\n` +
-      `*📺 Canal:* ${creator}\n` +
-      `*🔗 Link:* ${url}\n` +
-      `*🛰️ Servidor:* Adonix API\n\n` +
-      `_Requerido por ${m.pushName}_`;
+    let caption = `*「🎬 YTMP4 - Video descargado」*\n\n` +
+      `*🎤 Título:* ${title}\n` +
+      `*⏳ Duración:* ${duration}\n` +
+      `*📻 Canal:* ${creator}\n` +
+      `*🔗 Link:* ${url}\n\n` +
+      `_Solicitado por ${m.pushName}_\n\n` +
+      `*🌐 Servidor: TheAdonix API*`;
 
-    await conn.sendMessage(m.chat, {
-      image: { url: thumbnail },
-      caption
-    }, { quoted: m });
+    // Enviar imagen con la info
+    await conn.sendMessage(m.chat, { image: { url: thumbnail }, caption }, { quoted: m });
 
+    // Enviar video con el nombre correcto y sin error
     await conn.sendMessage(m.chat, {
       video: { url: video },
       mimetype: 'video/mp4',
-      fileName: filename
+      fileName: filename,
+      contextInfo: {
+        forwardingScore: 9999,
+        isForwarded: true,
+      }
     }, { quoted: m });
 
     await m.react('✅');
+
   } catch (e) {
     console.error(e);
     await m.react('❌');
@@ -45,6 +50,6 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
 
 handler.help = ['ytmp4 <texto o url>'];
 handler.tags = ['downloader', 'video'];
-handler.command = ['playvideo'];
+handler.command = ['ytmp4', 'playvideo'];
 
 export default handler;
