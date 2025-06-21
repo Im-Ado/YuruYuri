@@ -20,6 +20,6 @@ await conn.sendMessage(m.chat, { image: { url: images_url }, caption: HS }, { qu
 console.error(error)
 }}
 
-HS.command = ['pinterest', 'pinterestsearch']
+HS.command = ['pinterest', 'pin']
 
 export default HS
