@@ -109,7 +109,7 @@ const handler = async (m, { conn, text, usedPrefix, command }) => {
 
     await conn.reply(m.chat, infoMessage, m, JT);
 
-    if (["play", "yta", "mp3"].includes(command)) {
+    if (["play1", "yta", "mp3"].includes(command)) {
       const api = await ddownr.download(url, "mp3");
       const result = api.downloadUrl;
 
@@ -118,7 +118,7 @@ const handler = async (m, { conn, text, usedPrefix, command }) => {
         { audio: { url: result }, mimetype: "audio/mpeg", ptt: true },
         { quoted: m }
       );
-    } else if (["play2", "ytv", "mp4"].includes(command)) {
+    } else if (["play2", "ytv", "mp42"].includes(command)) {
       const sources = [
         `https://api.siputzx.my.id/api/d/ytmp4?url=${url}`,
         `https://api.zenkey.my.id/api/download/ytmp4?apikey=zenkey&url=${url}`,
