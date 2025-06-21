@@ -17,11 +17,11 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
 
     const { title, author, thumbnail, duration, video, audio, likes, comments, shares, views } = data.result;
 
-    const caption = `「✦」*Descargando ${title}*
+    const caption = `「✦」Descargando *${title}*
 ღ *Autor :* ${author.name} (@${author.username})
 ❐ *Duración :* ${duration} segundos
 ★ *Likes :* ${likes}
-▶ *Comentarios :* ${comments}
+✿ *Comentarios :* ${comments}
 🜲 *Compartidos :* ${shares}
 ⌨︎︎ *Vistas :* ${views}
 ☁︎ *Servidor :* Adonix API`;
