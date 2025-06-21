@@ -69,7 +69,7 @@ const ddownr = {
 const handler = async (m, { conn, text, usedPrefix, command }) => {
   try {
     if (!text.trim()) {
-      return conn.reply(m.chat, `✎ ingresa el nombre de la música a descargar.`, m);
+      return conn.reply(m.chat, `✎ Ingresa el nombre de la música a descargar.`, m);
     }
 
     const search = await yts(text);
@@ -103,7 +103,7 @@ const handler = async (m, { conn, text, usedPrefix, command }) => {
     if (command === 'play' || command === 'yta' || command === 'mp3') {
         const api = await ddownr.download(url, 'mp3');
         const result = api.downloadUrl;
-        await conn.sendMessage(m.chat, { audio: { url: result }, mimetype: "audio/mpeg" }, { quoted: m });
+        await conn.sendMessage(m.chat, { audio: { url: result }, mimetype: "audio/mpeg", ptt: true, { quoted: m });
 
     } else if (command === 'play2' || command === 'ytv' || command === 'mp4') {
       let sources = [
