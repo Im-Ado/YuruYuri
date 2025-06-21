@@ -95,12 +95,12 @@ const handler = async (m, { conn, text, usedPrefix, command }) => {
     const JT = {
       contextInfo: {
         externalAdReply: {
-          title: "Adonix API",
-          body: "Creado por Wirk",
+          title: wm,
+          body: textbot,
           mediaType: 1,
           previewType: 0,
           mediaUrl: url,
-          sourceUrl: url,
+          sourceUrl: null,
           thumbnail: thumb,
           renderLargerThumbnail: true,
         },
