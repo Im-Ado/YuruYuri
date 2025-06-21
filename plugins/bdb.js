@@ -95,8 +95,8 @@ const handler = async (m, { conn, text, usedPrefix, command }) => {
     const JT = {
       contextInfo: {
         externalAdReply: {
-          title: "Adonix API",
-          body: "Creado por Wirk",
+          title: wm,
+          body: textbot,
           mediaType: 1,
           previewType: 0,
           mediaUrl: url,
@@ -109,7 +109,7 @@ const handler = async (m, { conn, text, usedPrefix, command }) => {
 
     await conn.reply(m.chat, infoMessage, m, JT);
 
-    if (["play1", "yta", "mp3"].includes(command)) {
+    if (["play", "yta", "mp3"].includes(command)) {
       const api = await ddownr.download(url, "mp3");
       const result = api.downloadUrl;
 
