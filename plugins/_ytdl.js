@@ -40,7 +40,7 @@ const handler = async (m, { conn, text, usedPrefix, command }) => {
     await conn.reply(m.chat, infoMessage, m, JT)
 
     let api, result, fileSizeMB
-    if (command === 'mp3' || command === 'playaudio') {
+    if (command === 'play1' || command === 'playaudio') {
       api = await fetchAPI(url, 'audio')
       result = api.download || api.data.url
       fileSizeMB = await getFileSize(result)
