@@ -171,7 +171,7 @@ const handler = async (m, { conn, text, usedPrefix, command }) => {
   }
 };
 
-handler.command = handler.help = ["play", "mp3", "mp42"];
+handler.command = handler.help = ["mp3"];
 handler.tags = ["downloader"];
 
 export default handler;
