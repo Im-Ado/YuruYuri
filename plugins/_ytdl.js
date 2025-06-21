@@ -89,7 +89,7 @@ const getFileSize = async (url) => {
 }
 handler.command = handler.help = ['play1']
 handler.tags = ['descargas']
-handler.group = true
+handler.group = false
 
 export default handler
 
