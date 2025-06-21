@@ -1,69 +1,51 @@
 import fetch from 'node-fetch';
 
-let handler = async (m, { conn, args, command }) => {
-  const query = args.join(' ');
-  if (!query) return m.reply(`✐ Ingresa el nombre o link del video\n> *Ejemplo:* ${command} J Balvin - Rojo`);
-
-  await m.react('💫');
+let handler = async (m, { conn, text, usedPrefix, command }) => {
+  if (!text) return m.reply(`🌴 Pon el nombre o link de un video para buscar.\nEjemplo:\n${usedPrefix + command} Prince Royce - El Clavo`);
 
   try {
-    const api = `https://theadonix-api.vercel.app/api/ytmp3?query=${encodeURIComponent(query)}`;
-    const res = await fetch(api);
+    await m.react('🕒');
+
+    // Llamamos tu API con el texto o link
+    const res = await fetch(`https://theadonix-api.vercel.app/api/ytmp3?query=${encodeURIComponent(text)}`);
     const data = await res.json();
 
-    if (!data?.result?.audio) {
+    if (!data.result || !data.result.audio) {
+      await m.react('❌');
       return m.reply('❌ No se pudo obtener el audio.');
     }
 
-    // Validación real de audio descargable
-    const audioRes = await fetch(data.result.audio);
-    const contentType = audioRes.headers.get('content-type');
-    const audioBuffer = await audioRes.arrayBuffer();
-    const audioSize = audioBuffer.byteLength;
+    const { title, audio, thumbnail, filename, creator, duration, url } = data.result;
 
-    if (!contentType?.includes('audio') || audioSize < 10000) {
-      return m.reply('❌ El audio parece estar dañado o vacío.');
-    }
+    let caption = `*「🎧 YTMP3 - Audio descargado」*\n\n` +
+      `*🎤 Título:* ${title}\n` +
+      `*⏳ Duración:* ${duration}\n` +
+      `*📻 Canal:* ${creator}\n` +
+      `*🔗 Link:* ${url}\n\n` +
+      `_Solicitado por ${m.pushName}_`;
 
-    // Enviar imagen + info primero
-    const info = `*「✦」 ${data.result.title}*\n\n` +
-      `*🧷 Autor:* ${data.result.creator}\n` +
-      `*⏳ Duración:* ${data.result.duration}\n` +
-      `*🌐 URL:* ${data.result.url}`;
+    // Manda la imagen con la info
+    await conn.sendMessage(m.chat, { image: { url: thumbnail }, caption }, { quoted: m });
 
+    // Manda el audio con PTT y nombre correcto
     await conn.sendMessage(m.chat, {
-      image: { url: data.result.thumbnail },
-      caption: info
-    }, { quoted: m });
-
-    // Enviar el audio como PTT
-    await conn.sendMessage(m.chat, {
-      audio: { url: data.result.audio },
+      audio: { url: audio },
       mimetype: 'audio/mpeg',
       ptt: true,
-      fileName: `${data.result.title}.mp3`,
-      contextInfo: {
-        externalAdReply: {
-          title: data.result.title,
-          body: 'Descargado con The Adonix API',
-          thumbnailUrl: data.result.thumbnail,
-          sourceUrl: data.result.url,
-          mediaType: 2,
-          renderLargerThumbnail: true
-        }
-      }
+      fileName: filename
     }, { quoted: m });
 
     await m.react('✅');
 
   } catch (e) {
     console.error(e);
-    m.reply('❌ Error interno al procesar el audio.');
+    await m.react('❌');
+    m.reply(`❌ Ocurrió un error: ${e.message}`);
   }
 };
 
-handler.command = ['ytmp3', 'play3'];
-handler.help = ['ytmp3 <nombre o url>'];
-handler.tags = ['downloader'];
+handler.help = ['ytmp3 <texto o url>'];
+handler.tags = ['downloader', 'audio'];
+handler.command = ['ytmp3', 'playaudio'];
 
 export default handler;
