@@ -95,8 +95,8 @@ const handler = async (m, { conn, text, usedPrefix, command }) => {
     const JT = {
       contextInfo: {
         externalAdReply: {
-          title: wm,
-          body: textbot,
+          title: "Adonix API",
+          body: "Creado por Wirk",
           mediaType: 1,
           previewType: 0,
           mediaUrl: url,
@@ -177,6 +177,7 @@ handler.tags = ["downloader"];
 export default handler;
 
 function formatViews(views) {
+  if (!views || isNaN(views)) return "Desconocidas";
   if (views >= 1000) {
     return (views / 1000).toFixed(1) + "k (" + views.toLocaleString() + ")";
   } else {
