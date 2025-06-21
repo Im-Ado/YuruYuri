@@ -20,7 +20,6 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
     let caption = `*「${wm}」*\n\n` +
       `*🎤 Título:* ${title}\n` +
       `*⏳ Duración:* ${duration}\n` +
-      `*📻 Canal:* ${creator}\n` +
       `*🔗 Link:* ${url}\n\n` +
       `_Solicitado por ${m.pushName}_\n\n` +
       `*🧩 Servidor: Adonix API*`;
