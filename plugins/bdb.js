@@ -1,22 +1,27 @@
 import fetch from "node-fetch";
-import yts from 'yt-search';
+import yts from "yt-search";
 import axios from "axios";
 
-const formatAudio = ['mp3', 'm4a', 'webm', 'acc', 'flac', 'opus', 'ogg', 'wav'];
-const formatVideo = ['360', '480', '720', '1080', '1440', '4k'];
+const formatAudio = ["mp3", "m4a", "webm", "acc", "flac", "opus", "ogg", "wav"];
+const formatVideo = ["360", "480", "720", "1080", "1440", "4k"];
 
 const ddownr = {
   download: async (url, format) => {
     if (!formatAudio.includes(format) && !formatVideo.includes(format)) {
-      throw new Error('Formato no soportado, verifica la lista de formatos disponibles.');
+      throw new Error(
+        "Formato no soportado, verifica la lista de formatos disponibles."
+      );
     }
 
     const config = {
-      method: 'GET',
-      url: `https://p.oceansaver.in/ajax/download.php?format=${format}&url=${encodeURIComponent(url)}&api=dfcb6d76f2f6a9894gjkege8a4ab232222`,
+      method: "GET",
+      url: `https://p.oceansaver.in/ajax/download.php?format=${format}&url=${encodeURIComponent(
+        url
+      )}&api=dfcb6d76f2f6a9894gjkege8a4ab232222`,
       headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, como Gecko) Chrome/91.0.4472.124 Safari/537.36'
-      }
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, como Gecko) Chrome/91.0.4472.124 Safari/537.36",
+      },
     };
 
     try {
@@ -31,63 +36,67 @@ const ddownr = {
           id: id,
           image: image,
           title: title,
-          downloadUrl: downloadUrl
+          downloadUrl: downloadUrl,
         };
       } else {
-        throw new Error('Fallo al obtener los detalles del video.');
+        throw new Error("Fallo al obtener los detalles del video.");
       }
     } catch (error) {
-      console.error('Error:', error);
+      console.error("Error:", error.message || error);
       throw error;
     }
   },
   cekProgress: async (id) => {
     const config = {
-      method: 'GET',
+      method: "GET",
       url: `https://p.oceansaver.in/ajax/progress.php?id=${id}`,
       headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, como Gecko) Chrome/91.0.4472.124 Safari/537.36'
-      }
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, como Gecko) Chrome/91.0.4472.124 Safari/537.36",
+      },
     };
 
     try {
       while (true) {
         const response = await axios.request(config);
 
-        if (response.data && response.data.success && response.data.progress === 1000) {
+        if (
+          response.data &&
+          response.data.success &&
+          response.data.progress === 1000
+        ) {
           return response.data.download_url;
         }
-        await new Promise(resolve => setTimeout(resolve, 5000));
+        await new Promise((resolve) => setTimeout(resolve, 3000)); // 3 seg para ir más rápido
       }
     } catch (error) {
-      console.error('Error:', error);
+      console.error("Error:", error.message || error);
       throw error;
     }
-  }
+  },
 };
 
 const handler = async (m, { conn, text, usedPrefix, command }) => {
   try {
-    if (!text.trim()) {
+    if (!text || !text.trim())
       return conn.reply(m.chat, `✎ Ingresa el nombre de la música a descargar.`, m);
-    }
 
     const search = await yts(text);
-    if (!search.all || search.all.length === 0) {
-      return m.reply('No se encontraron resultados para tu búsqueda.');
-    }
+    if (!search.all || search.all.length === 0)
+      return m.reply("No se encontraron resultados para tu búsqueda.");
 
     const videoInfo = search.all[0];
     const { title, thumbnail, timestamp, views, ago, url } = videoInfo;
+
     const vistas = formatViews(views);
-    const infoMessage = `「✦」Descargando *<${title}>*\n\n> ✦ Canal » *${videoInfo.author.name || 'Desconocido'}*\n> ✰ Vistas » *${views}*\n> ⴵ Duración » *${timestamp}*\n> ✐ Publicación » *${ago}*\n> 🜸 Link » ${url}\n`;
-       const thumb = (await conn.getFile(thumbnail))?.data;
+    const infoMessage = `「✦」Descargando *<${title}>*\n\n> ✦ Canal » *${videoInfo.author.name || "Desconocido"}*\n> ✰ Vistas » *${vistas}*\n> ⴵ Duración » *${timestamp}*\n> ✐ Publicación » *${ago}*\n> 🜸 Link » ${url}\n`;
+    const thumb = (await conn.getFile(thumbnail))?.data;
 
     const JT = {
       contextInfo: {
         externalAdReply: {
-          title: packname,
-          body: dev,
+          title: "Adonix API",
+          body: "Creado por Wirk",
           mediaType: 1,
           previewType: 0,
           mediaUrl: url,
@@ -98,37 +107,50 @@ const handler = async (m, { conn, text, usedPrefix, command }) => {
       },
     };
 
-      await conn.reply(m.chat, infoMessage, m, JT);
+    await conn.reply(m.chat, infoMessage, m, JT);
 
-    if (command === 'play' || command === 'yta' || command === 'mp3') {
-        const api = await ddownr.download(url, 'mp3');
-        const result = api.downloadUrl;
-        await conn.sendMessage(m.chat, { audio: { url: result }, mimetype: "audio/mpeg", ptt: true, { quoted: m });
+    if (["play", "yta", "mp3"].includes(command)) {
+      const api = await ddownr.download(url, "mp3");
+      const result = api.downloadUrl;
 
-    } else if (command === 'play2' || command === 'ytv' || command === 'mp4') {
-      let sources = [
+      await conn.sendMessage(
+        m.chat,
+        { audio: { url: result }, mimetype: "audio/mpeg", ptt: true },
+        { quoted: m }
+      );
+    } else if (["play2", "ytv", "mp4"].includes(command)) {
+      const sources = [
         `https://api.siputzx.my.id/api/d/ytmp4?url=${url}`,
         `https://api.zenkey.my.id/api/download/ytmp4?apikey=zenkey&url=${url}`,
         `https://axeel.my.id/api/download/video?url=${encodeURIComponent(url)}`,
-        `https://delirius-apiofc.vercel.app/download/ytmp4?url=${url}`
+        `https://delirius-apiofc.vercel.app/download/ytmp4?url=${url}`,
       ];
 
       let success = false;
-      for (let source of sources) {
+      for (const source of sources) {
         try {
           const res = await fetch(source);
-          const { data, result, downloads } = await res.json();
-          let downloadUrl = data?.dl || result?.download?.url || downloads?.url || data?.download?.url;
+          const json = await res.json();
+
+          let downloadUrl =
+            json.data?.dl ||
+            json.result?.download?.url ||
+            json.downloads?.url ||
+            json.data?.download?.url;
 
           if (downloadUrl) {
             success = true;
-            await conn.sendMessage(m.chat, {
-              video: { url: downloadUrl },
-              fileName: `${title}.mp4`,
-              mimetype: 'video/mp4',
-              caption: ``,
-              thumbnail: thumb
-            }, { quoted: m });
+            await conn.sendMessage(
+              m.chat,
+              {
+                video: { url: downloadUrl },
+                fileName: `${title}.mp4`,
+                mimetype: "video/mp4",
+                caption: ``,
+                thumbnail: thumb,
+              },
+              { quoted: m }
+            );
             break;
           }
         } catch (e) {
@@ -137,24 +159,26 @@ const handler = async (m, { conn, text, usedPrefix, command }) => {
       }
 
       if (!success) {
-        return m.reply(` ✱ *No se pudo descargar el video:* No se encontró un enlace de descarga válido.`);
+        return m.reply(
+          `✱ *No se pudo descargar el video:* No se encontró un enlace de descarga válido.`
+        );
       }
     } else {
-      throw "Comando no reconocido.";
+      throw new Error("Comando no reconocido.");
     }
   } catch (error) {
-    return m.reply(`𓁏 *Error:* ${error.message}`);
+    return m.reply(`𓁏 *Error:* ${error.message || error}`);
   }
 };
 
-handler.command = handler.help = ['play', 'mp3']; 
-handler.tags = ['downloader'];
+handler.command = handler.help = ["play1", "mp3", "mp42"];
+handler.tags = ["downloader"];
 
 export default handler;
 
 function formatViews(views) {
   if (views >= 1000) {
-    return (views / 1000).toFixed(1) + 'k (' + views.toLocaleString() + ')';
+    return (views / 1000).toFixed(1) + "k (" + views.toLocaleString() + ")";
   } else {
     return views.toString();
   }
