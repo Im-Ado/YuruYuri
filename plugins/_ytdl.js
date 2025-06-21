@@ -1,133 +1,102 @@
-import crypto from "crypto";
+import fetch from 'node-fetch'
+import yts from 'yt-search'
+import axios from 'axios'
+const MAX_SIZE_MB = 100
 
-async function yta(link) {
-  const format = "mp3"; 
-  const apiBase = "https://media.savetube.me/api";
-  const apiCDN = "/random-cdn";
-  const apiInfo = "/v2/info";
-  const apiDownload = "/download";
+const handler = async (m, { conn, text, usedPrefix, command }) => {
 
-  const decryptData = async (enc) => {
-    try {
-      const key = Buffer.from('C5D58EF67A7584E4A29F6C35BBC4EB12', 'hex');
-      const data = Buffer.from(enc, 'base64');
-      const iv = data.slice(0, 16);
-      const content = data.slice(16);
-
-      const decipher = crypto.createDecipheriv('aes-128-cbc', key, iv);
-      let decrypted = decipher.update(content);
-      decrypted = Buffer.concat([decrypted, decipher.final()]);
-
-      return JSON.parse(decrypted.toString());
-    } catch (error) {
-      return null;
-    }
-  };
-
-  const request = async (endpoint, data = {}, method = 'post') => {
-    try {
-      const { data: response } = await axios({
-        method,
-        url: `${endpoint.startsWith('http') ? '' : apiBase}${endpoint}`,
-        data: method === 'post' ? data : undefined,
-        params: method === 'get' ? data : undefined,
-        headers: {
-          'accept': '*/*',
-          'content-type': 'application/json',
-          'origin': 'https://yt.savetube.me',
-          'referer': 'https://yt.savetube.me/',
-          'user-agent': 'Postify/1.0.0'
-        }
-      });
-      return { status: true, data: response };
-    } catch (error) {
-      return { status: false, error: error.message };
-    }
-  };
-
-  const youtubeID = link.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/|shorts\/))([a-zA-Z0-9_-]{11})/);
-  if (!youtubeID) return { status: false, error: "Gagal mengekstrak ID video dari URL." };
-
-  const qualityOptions = ['1080', '720', '480', '360', '240']; 
+  if (!text.trim()) {
+    return conn.reply(m.chat, `❀ Por favor, ingresa el nombre de la música a descargar.`, m)
+  }
   try {
-    const cdnRes = await request(apiCDN, {}, 'get');
-    if (!cdnRes.status) return cdnRes;
-    const cdn = cdnRes.data.cdn;
-
-    const infoRes = await request(`https://${cdn}${apiInfo}`, { url: `https://www.youtube.com/watch?v=${youtubeID[1]}` });
-    if (!infoRes.status) return infoRes;
-
-    const decrypted = await decryptData(infoRes.data.data);
-    if (!decrypted) return { status: false, error: "Gagal mendekripsi data video." };
-
-    let downloadUrl = null;
-    for (const quality of qualityOptions) {
-      const downloadRes = await request(`https://${cdn}${apiDownload}`, {
-        id: youtubeID[1],
-        downloadType: format === 'mp3' ? 'audio' : 'video',
-        quality: quality,
-        key: decrypted.key
-      });
-      if (downloadRes.status && downloadRes.data.data.downloadUrl) {
-        downloadUrl = downloadRes.data.data.downloadUrl;
-        break;
-      }
+    const search = await yts(text)
+    if (!search.all.length) {
+      return m.reply('✧ No se encontraron resultados para tu búsqueda.')
     }
 
-    if (!downloadUrl) {
-      return { status: false, error: "No se pudo encontrar un enlace de descarga disponible para el video." };
-    }
-    const fileResponse = await axios.head(downloadUrl); 
-    const size = fileResponse.headers['content-length']; 
+    const videoInfo = search.all[0]
+    const { title, thumbnail, timestamp, views, ago, url, author } = videoInfo
+    const vistas = formatViews(views)
+    const canal = author.name || 'Desconocido'
+    const infoMessage = `「✦」Descargando *<${title}>*\n\n> ✦ Canal » *${videoInfo.author.name || 'Desconocido'}*\n> ✰ Vistas » *${views}*\n> ⴵ Duración » *${timestamp}*\n> ✐ Publicación » *${ago}*\n> 🜸 Link » ${url}`
 
-    return {
-      status: true,
-      result: {
-        title: decrypted.title || "Unknown",
-        type: format === 'mp3' ? 'audio' : 'video',
-        format: format,
-        download: downloadUrl,
-        size: size ? `${(size / 1024 / 1024).toFixed(2)} MB` : 'Unknown'
+    const thumb = (await conn.getFile(thumbnail)).data
+
+    const JT = {
+      contextInfo: {
+        externalAdReply: {
+          title: botname,
+          body: dev,
+          mediaType: 1,
+          previewType: 0,
+          mediaUrl: url,
+          sourceUrl: url,
+          thumbnail: thumb,
+          renderLargerThumbnail: true,
+        },
+      },
+    }
+
+    await conn.reply(m.chat, infoMessage, m, JT)
+
+    let api, result, fileSizeMB
+    if (command === 'mp3' || command === 'playaudio') {
+      api = await fetchAPI(url, 'audio')
+      result = api.download || api.data.url
+      fileSizeMB = await getFileSize(result)
+
+      if (fileSizeMB > MAX_SIZE_MB) {
+        await conn.sendMessage(m.chat, { document: { url: result }, fileName: `${api.title || api.data.filename}.mp3`, mimetype: 'audio/mpeg' }, { quoted: m })
+      } else {
+        await conn.sendMessage(m.chat, { audio: { url: result }, fileName: `${api.title || api.data.filename}.mp3`, mimetype: 'audio/mpeg' }, { quoted: m })
       }
-    };
+    } else if (command === 'mp4' || command === 'playvideo') {
+      api = await fetchAPI(url, 'video')
+      result = api.download || api.data.url
+      fileSizeMB = await getFileSize(result)
+
+      if (fileSizeMB > MAX_SIZE_MB) {
+        await conn.sendMessage(m.chat, { document: { url: result }, fileName: `${api.title || api.data.filename}.mp4`, mimetype: 'video/mp4' }, { quoted: m })
+      } else {
+        await conn.sendMessage(m.chat, { video: { url: result }, fileName: api.title || api.data.filename, mimetype: 'video/mp4', caption: title, thumbnail: api.thumbnail || thumb }, { quoted: m })
+      }
+    } else {
+      throw new Error("✧ Comando no reconocido.")
+    }
+
   } catch (error) {
-    return { status: false, error: error.message };
+    return m.reply(`⚠︎ Ocurrió un error: ${error.message}`)
   }
 }
 
-async function ytv(url) {
-  const headers = {
-    "accept": "*/*",
-    "accept-language": "id-ID,id;q=0.9,en-US;q=0.8,en;q=0.7",
-    "sec-ch-ua": "\"Not A(Brand\";v=\"8\", \"Chromium\";v=\"132\"",
-    "sec-ch-ua-mobile": "?1",
-    "sec-ch-ua-platform": "\"Android\"",
-    "sec-fetch-dest": "empty",
-    "sec-fetch-mode": "cors",
-    "sec-fetch-site": "cross-site",
-    "Referer": "https://id.ytmp3.mobi/",
-    "Referrer-Policy": "strict-origin-when-cross-origin"
-  };
-  const initial = await fetch(`https://d.ymcdn.org/api/v1/init?p=y&23=1llum1n471&_=${Math.random()}`, { headers });
-  const init = await initial.json();
-  const id = url.match(/(?:youtu\.be\/|youtube\.com\/(?:.*v=|.*\/|.*embed\/))([^&?/]+)/)?.[1];
-  const convertURL = init.convertURL + `&v=${id}&f=mp4&_=${Math.random()}`;
-
-  const converts = await fetch(convertURL, { headers });
-  const convert = await converts.json();
-
-  let info = {};
-  for (let i = 0; i < 3; i++) {
-    const progressResponse = await fetch(convert.progressURL, { headers });
-    info = await progressResponse.json();
-    if (info.progress === 3) break;
-  }
-
-  const result = {
-    url: convert.downloadURL,
-    title: info.title
-  };
-  return result;
+const fetchAPI = async (url, type) => {
+    const fallbackEndpoints = {
+      audio: `https://api.neoxr.eu/api/youtube?url=${url}&type=audio&quality=128kbps&apikey=Paimon`,
+      video: `https://api.neoxr.eu/api/youtube?url=${url}&type=video&quality=720p&apikey=Paimon`,
+    }
+    const response = await fetch(fallbackEndpoints[type])
+    return await response.json()
 }
 
-export { yta, ytv }
+const getFileSize = async (url) => {
+  try {
+    const response = await axios.head(url)
+    const sizeInBytes = response.headers['content-length'] || 0
+    return parseFloat((sizeInBytes / (1024 * 1024)).toFixed(2))
+  } catch (error) {
+    return 0
+  }
+}
+handler.command = handler.help = ['play1']
+handler.tags = ['descargas']
+handler.group = true
+
+export default handler
+
+function formatViews(views) {
+  if (views === undefined) return "No disponible"
+  if (views >= 1_000_000_000) return `${(views / 1_000_000_000).toFixed(1)}B (${views.toLocaleString()})`
+  if (views >= 1_000_000) return `${(views / 1_000_000).toFixed(1)}M (${views.toLocaleString()})`
+  if (views >= 1_000) return `${(views / 1_000).toFixed(1)}k (${views.toLocaleString()})`
+  return views.toString()
+}
