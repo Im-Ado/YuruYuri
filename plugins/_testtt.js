@@ -17,19 +17,14 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
 
     const { title, author, thumbnail, duration, video, audio, likes, comments, shares, views } = data.result;
 
-    const caption = `
-┌──「🌺 𝗧𝗶𝗸𝗧𝗼𝗸 𝗗𝗼𝘄𝗻𝗹𝗼𝗮𝗱 」──⊷
-│🌸 *Título:* ${title}
-│🎭 *Autor:* ${author.name} (@${author.username})
-│🎬 *Duración:* ${duration} segundos
-│💖 *Likes:* ${likes}
-│💬 *Comentarios:* ${comments}
-│🔁 *Compartidos:* ${shares}
-│👀 *Vistas:* ${views}
-│🌐 *Servidor:* Adonix API
-│👤 *Creador:* Ado ( Wirk )
-└───────────────⋆
-`;
+    const caption = `「✦」*Descargando ${title}*
+ღ *Autor :* ${author.name} (@${author.username})
+❐ *Duración :* ${duration} segundos
+★ *Likes :* ${likes}
+▶ *Comentarios :* ${comments}
+🜲 *Compartidos :* ${shares}
+⌨︎︎ *Vistas :* ${views}
+☁︎ *Servidor :* Adonix API`;
 
     await conn.sendMessage(m.chat, {
       image: { url: thumbnail },
@@ -53,6 +48,6 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
 
 handler.help = ['tiktok <enlace>'];
 handler.tags = ['downloader'];
-handler.command = ['ttdl'];
+handler.command = ['ttdl', 'tt', 'tiktok'];
 
 export default handler;
