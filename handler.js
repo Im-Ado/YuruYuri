@@ -1,5 +1,5 @@
 import { smsg } from './lib/simple.js'
-import { format } from 'util' 
+import { format } from 'util'
 import { fileURLToPath } from 'url'
 import path, { join } from 'path'
 import { unwatchFile, watchFile } from 'fs'
@@ -9,27 +9,36 @@ import fetch from 'node-fetch'
 const { proto } = (await import('@whiskeysockets/baileys')).default
 const isNumber = x => typeof x === 'number' && !isNaN(x)
 const delay = ms => isNumber(ms) && new Promise(resolve => setTimeout(function () {
-clearTimeout(this)
-resolve()
+  clearTimeout(this)
+  resolve()
 }, ms))
 
+// 🔧 Esta función arregla el LID raro tipo "12345:1@s.whatsapp.net" aun no esta probada asi que aun esta en beta
+const normalizeJid = (jid = '') => jid?.split(':')[0] + '@s.whatsapp.net'
+
 export async function handler(chatUpdate) {
-this.msgqueque = this.msgqueque || []
-this.uptime = this.uptime || Date.now()
-if (!chatUpdate)
-return
-this.pushMessage(chatUpdate.messages).catch(console.error)
-let m = chatUpdate.messages[chatUpdate.messages.length - 1]
-if (!m)
-return;
-if (global.db.data == null)
-await global.loadDatabase()       
-try {
-m = smsg(this, m) || m
-if (!m)
-return
-m.exp = 0
-m.coin = false
+  this.msgqueque = this.msgqueque || []
+  this.uptime = this.uptime || Date.now()
+  if (!chatUpdate) return
+
+  this.pushMessage(chatUpdate.messages).catch(console.error)
+  let m = chatUpdate.messages[chatUpdate.messages.length - 1]
+  if (!m) return
+
+  if (global.db.data == null) await global.loadDatabase()
+
+  try {
+    m = smsg(this, m) || m
+    if (!m) return
+
+    // 🧩 Test para evitar el problema del LID
+    m.sender = normalizeJid(m.sender)
+    if (m.key && m.key.participant) m.key.participant = normalizeJid(m.key.participant)
+    if (m.participant) m.participant = normalizeJid(m.participant)
+    m.exp = 0
+    m.coin = false
+
+   
 try {
 let user = global.db.data.users[m.sender]
 if (typeof user !== 'object')  
@@ -472,7 +481,7 @@ await plugin.after.call(this, m, extra)
 console.error(e)
 }}
 if (m.coin)
-conn.reply(m.chat, `❮✦❯ Utilizaste ${+m.coin} ${moneda}`, m)
+conn.reply(m.chat, `❮✧❯ Utilizaste ${+m.coin} ${moneda}`, m)
 }
 break
 }}
