@@ -1,3 +1,4 @@
+//Código usando Adonix Api ytmp3 🐦‍🔥
 import fetch from 'node-fetch';
 
 let handler = async (m, { conn, text, usedPrefix, command }) => {
@@ -6,7 +7,7 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
   try {
     await m.react('🕒');
 
-    // Llamamos tu API con el texto o link
+    // Llamamos a mi api 👻 xd 
     const res = await fetch(`https://theadonix-api.vercel.app/api/ytmp3?query=${encodeURIComponent(text)}`);
     const data = await res.json();
 
@@ -24,10 +25,10 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
       `_Solicitado por ${m.pushName}_\n\n` +
       `*❀ Servidor: Adonix API*`;
 
-    // Manda la imagen con la info
+    
     await conn.sendMessage(m.chat, { image: { url: thumbnail }, caption }, { quoted: m });
 
-    // Manda el audio con PTT y nombre correcto
+    
     await conn.sendMessage(m.chat, {
       audio: { url: audio },
       mimetype: 'audio/mpeg',
