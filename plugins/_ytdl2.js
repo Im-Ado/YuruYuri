@@ -6,7 +6,6 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
   try {
     await m.react('🕒');
 
-    // Llamamos tu API con el texto o link
     const res = await fetch(`https://theadonix-api.vercel.app/api/ytmp4?query=${encodeURIComponent(text)}`);
     const data = await res.json();
 
@@ -25,18 +24,13 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
       `_Solicitado por ${m.pushName}_\n\n` +
       `*🌐 Servidor: TheAdonix API*`;
 
-    // Enviar imagen con la info
     await conn.sendMessage(m.chat, { image: { url: thumbnail }, caption }, { quoted: m });
 
-    // Enviar video con el nombre correcto y sin error
+    // Enviar video sin contextInfo problemático
     await conn.sendMessage(m.chat, {
       video: { url: video },
       mimetype: 'video/mp4',
-      fileName: filename,
-      contextInfo: {
-        forwardingScore: 9999,
-        isForwarded: true,
-      }
+      fileName: filename
     }, { quoted: m });
 
     await m.react('✅');
