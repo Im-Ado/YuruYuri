@@ -18,11 +18,11 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
     const { title, audio, thumbnail, filename, creator, duration, url } = data.result;
 
     let caption = `*「${wm}」*\n\n` +
-      `*🎤 Título:* ${title}\n` +
-      `*⏳ Duración:* ${duration}\n` +
-      `*🔗 Link:* ${url}\n\n` +
+      `*❒ Título:* ${title}\n` +
+      `*★ Duración:* ${duration}\n` +
+      `*✧ Link:* ${url}\n\n` +
       `_Solicitado por ${m.pushName}_\n\n` +
-      `*🧩 Servidor: Adonix API*`;
+      `*❀ Servidor: Adonix API*`;
 
     // Manda la imagen con la info
     await conn.sendMessage(m.chat, { image: { url: thumbnail }, caption }, { quoted: m });
