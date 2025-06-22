@@ -1,37 +1,39 @@
-import translate from '@vitalets/google-translate-api';
-import axios from 'axios';
 import fetch from 'node-fetch';
 
-const handler = async (m, {conn, text, command, args, usedPrefix}) => {
+let handler = async (m, { conn, text, usedPrefix, command }) => {
+  if (!text) return m.reply(`🤖 *Adonix IA* 🤖\n\nUsa:\n${usedPrefix + command} [tu pregunta o solicitud]\n\nEjemplo:\n${usedPrefix + command} haz un código en JS que sume dos números`);
 
-if (!text) conn.reply(m.chat, `${emoji} Te faltó el texto para hablar con la *Bot*`, m);
-try {
-// await m.react(emojis)
-const resSimi = await simitalk(text);
-conn.sendMessage(m.chat, { text: resSimi.resultado.simsimi }, { quoted: m });
-} catch {
-throw `${msm} Ocurrió un error.`;
-}};
+  try {
+    await m.react('🧠');
 
-handler.help = ['simi', 'bot'];
-handler.tags = ['fun'];
-handler.group = true;
-handler.register = true
-handler.command = ['yuki', 'Yuki']
+    // Llamamos a la API (POST)
+    let res = await fetch('https://theadonix-api.vercel.app/api/adonix', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text })
+    });
+
+    let data = await res.json();
+
+    if (!data.response || !data.response.respuesta) {
+      await m.react('❌');
+      return m.reply('❌ No pude obtener respuesta de Adonix IA.');
+    }
+
+    let reply = `🤖 *Adonix IA* 🤖\n\n*Tu pregunta:*\n${text}\n\n*Respuesta:*\n${data.response.respuesta}\n\n*Peticiones hechas al bot:* ${data.requestsCount}`;
+
+    await m.reply(reply);
+    await m.react('✅');
+
+  } catch (e) {
+    console.error(e);
+    await m.react('❌');
+    m.reply(`❌ Error al usar Adonix IA: ${e.message}`);
+  }
+};
+
+handler.help = ['adonix <pregunta>'];
+handler.tags = ['ia', 'inteligencia'];
+handler.command = ['adonix', 'ai', 'adonixia'];
 
 export default handler;
-
-async function simitalk(ask, apikeyyy = "iJ6FxuA9vxlvz5cKQCt3", language = "es") {
-if (!ask) return { status: false, resultado: { msg: "Debes ingresar un texto para hablar con simsimi." }};
-try {
-const response1 = await axios.get(`https://delirius-apiofc.vercel.app/tools/simi?text=${encodeURIComponent(ask)}`);
-const trad1 = await translate(`${response1.data.data.message}`, {to: language, autoCorrect: true});
-if (trad1.text == 'indefinida' || response1 == '' || !response1.data) trad1 = XD // Se usa "XD" para causar error y usar otra opción.  
-return { status: true, resultado: { simsimi: trad1.text }};        
-} catch {
-try {
-const response2 = await axios.get(`https://anbusec.xyz/api/v1/simitalk?apikey=${apikeyyy}&ask=${ask}&lc=${language}`);
-return { status: true, resultado: { simsimi: response2.data.message }};       
-} catch (error2) {
-return { status: false, resultado: { msg: "Todas las API's fallarón. Inténtalo de nuevo más tarde.", error: error2.message }};
-}}}
