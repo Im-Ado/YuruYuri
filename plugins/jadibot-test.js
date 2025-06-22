@@ -90,7 +90,7 @@ export default handler
 
 export async function yukiJadiBot(options) {
 let { pathYukiJadiBot, m, conn, args, usedPrefix, command } = options
-if (command === 'code') {
+if (command === 'cou') {
 command = 'qr'; 
 args.unshift('code')}
 const mcode = args[0] && /(--code|code)/.test(args[0].trim()) ? true : args[1] && /(--code|code)/.test(args[1].trim()) ? true : false
