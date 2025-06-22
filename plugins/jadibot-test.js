@@ -80,6 +80,9 @@ yukiJBOptions.args = args
 yukiJBOptions.usedPrefix = usedPrefix
 yukiJBOptions.command = command
 yukiJBOptions.fromCommand = true
+// Pass original message context to yukiJadiBot
+yukiJBOptions.originalSender = m.sender;
+yukiJBOptions.originalChat = m.chat;
 yukiJadiBot(yukiJBOptions)
 global.db.data.users[m.sender].Subs = new Date * 1
 }
@@ -89,7 +92,7 @@ handler.command = ['qr', 'cou']
 export default handler
 
 export async function yukiJadiBot(options) {
-let { pathYukiJadiBot, m, conn, args, usedPrefix, command } = options
+let { pathYukiJadiBot, m, conn, args, usedPrefix, command, originalSender, originalChat } = options // Destructure originalSender and originalChat
 if (command === 'cou') {
 command = 'qr';
 args.unshift('code')}
@@ -106,7 +109,7 @@ fs.mkdirSync(pathYukiJadiBot, { recursive: true })}
 try {
 args[0] && args[0] != undefined ? fs.writeFileSync(pathCreds, JSON.stringify(JSON.parse(Buffer.from(args[0], "base64").toString("utf-8")), null, '\t')) : ""
 } catch {
-conn.reply(m.chat, `${emoji} Use correctamente el comando » ${usedPrefix + command} code`, m)
+conn.reply(originalChat, `${emoji} Use correctamente el comando » ${usedPrefix + command} code`, m) // Use originalChat here
 return
 }
 
@@ -134,35 +137,32 @@ let sock = makeWASocket(connectionOptions)
 sock.isInit = false
 let isInit = true
 
-// Store the original sender's chat and JID for later use
-const originalM = m; // Store the original `m` object here
-
 async function connectionUpdate(update) {
 const { connection, lastDisconnect, isNewLogin, qr } = update
 if (isNewLogin) sock.isInit = false
 if (qr && !mcode) {
-if (originalM?.chat) { // Use originalM here
-txtQR = await conn.sendMessage(originalM.chat, { image: await qrcode.toBuffer(qr, { scale: 8 }), caption: rtx.trim()}, { quoted: originalM})
+if (originalChat) { // Use originalChat
+txtQR = await conn.sendMessage(originalChat, { image: await qrcode.toBuffer(qr, { scale: 8 }), caption: rtx.trim()}, { quoted: m}) // m is still available from options here
 } else {
 return
 }
 if (txtQR && txtQR.key) {
-setTimeout(() => { conn.sendMessage(originalM.sender, { delete: txtQR.key })}, 30000) // Use originalM here
+setTimeout(() => { conn.sendMessage(originalSender, { delete: txtQR.key })}, 30000) // Use originalSender
 }
 return
 }
 if (qr && mcode) {
-let secret = await sock.requestPairingCode((originalM.sender.split`@`[0])) // Use originalM here
+let secret = await sock.requestPairingCode((originalSender.split`@`[0])) // Use originalSender
 secret = secret.match(/.{1,4}/g)?.join("-")
-txtCode = await conn.sendMessage(originalM.chat, {text : rtx2}, { quoted: originalM }) // Use originalM here
-codeBot = await originalM.reply(secret) // Use originalM here
+txtCode = await conn.sendMessage(originalChat, {text : rtx2}, { quoted: m }) // Use originalChat, m is still available
+codeBot = await conn.sendMessage(originalChat, { text: secret }, { quoted: m }) // Send code to original chat, use m for quoting
 console.log(secret)
 }
 if (txtCode && txtCode.key) {
-setTimeout(() => { conn.sendMessage(originalM.sender, { delete: txtCode.key })}, 30000) // Use originalM here
+setTimeout(() => { conn.sendMessage(originalSender, { delete: txtCode.key })}, 30000) // Use originalSender
 }
 if (codeBot && codeBot.key) {
-setTimeout(() => { conn.sendMessage(originalM.sender, { delete: codeBot.key })}, 30000) // Use originalM here
+setTimeout(() => { conn.sendMessage(originalSender, { delete: codeBot.key })}, 30000) // Use originalSender
 }
 const endSesion = async (loaded) => {
 if (!loaded) {
@@ -190,14 +190,14 @@ await creloadHandler(true).catch(console.error)
 if (reason === 440) {
 console.log(chalk.bold.magentaBright(`\n╭┄┄┄┄┄┄┄┄┄┄┄┄┄┄ • • • ┄┄┄┄┄┄┄┄┄┄┄┄┄┄⟡\n┆ La conexión (+${path.basename(pathYukiJadiBot)}) fue reemplazada por otra sesión activa.\n╰┄┄┄┄┄┄┄┄┄┄┄┄┄┄ • • • ┄┄┄┄┄┄┄┄┄┄┄┄┄┄⟡`))
 try {
-if (options.fromCommand) originalM?.chat ? await conn.sendMessage(`${path.basename(pathYukiJadiBot)}@s.whatsapp.net`, {text : '*HEMOS DETECTADO UNA NUEVA SESIÓN, BORRE LA NUEVA SESIÓN PARA CONTINUAR*\n\n> *SI HAY ALGÚN PROBLEMA VUELVA A CONECTARSE*' }, { quoted: originalM || null }) : "" // Use originalM here
+if (options.fromCommand) originalChat ? await conn.sendMessage(`${path.basename(pathYukiJadiBot)}@s.whatsapp.net`, {text : '*HEMOS DETECTADO UNA NUEVA SESIÓN, BORRE LA NUEVA SESIÓN PARA CONTINUAR*\n\n> *SI HAY ALGÚN PROBLEMA VUELVA A CONECTARSE*' }, { quoted: m || null }) : "" // Use originalChat
 } catch (error) {
 console.error(chalk.bold.yellow(`Error 440 no se pudo enviar mensaje a: +${path.basename(pathYukiJadiBot)}`))
 }}
 if (reason == 405 || reason == 401) {
 console.log(chalk.bold.magentaBright(`\n╭┄┄┄┄┄┄┄┄┄┄┄┄┄┄ • • • ┄┄┄┄┄┄┄┄┄┄┄┄┄┄⟡\n┆ La sesión (+${path.basename(pathYukiJadiBot)}) fue cerrada. Credenciales no válidas o dispositivo desconectado manualmente.\n╰┄┄┄┄┄┄┄┄┄┄┄┄┄┄ • • • ┄┄┄┄┄┄┄┄┄┄┄┄┄┄⟡`))
 try {
-if (options.fromCommand) originalM?.chat ? await conn.sendMessage(`${path.basename(pathYukiJadiBot)}@s.whatsapp.net`, {text : '*SESIÓN PENDIENTE*\n\n> *INTENTÉ NUEVAMENTE VOLVER A SER SUB-BOT*' }, { quoted: originalM || null }) : "" // Use originalM here
+if (options.fromCommand) originalChat ? await conn.sendMessage(`${path.basename(pathYukiJadiBot)}@s.whatsapp.net`, {text : '*SESIÓN PENDIENTE*\n\n> *INTENTÉ NUEVAMENTE VOLVER A SER SUB-BOT*' }, { quoted: m || null }) : "" // Use originalChat
 } catch (error) {
 console.error(chalk.bold.yellow(`Error 405 no se pudo enviar mensaje a: +${path.basename(pathYukiJadiBot)}`))
 }
@@ -205,7 +205,7 @@ fs.rmdirSync(pathYukiJadiBot, { recursive: true })
 }
 if (reason === 500) {
 console.log(chalk.bold.magentaBright(`\n╭┄┄┄┄┄┄┄┄┄┄┄┄┄┄ • • • ┄┄┄┄┄┄┄┄┄┄┄┄┄┄⟡\n┆ Conexión perdida en la sesión (+${path.basename(pathYukiJadiBot)}). Borrando datos...\n╰┄┄┄┄┄┄┄┄┄┄┄┄┄┄ • • • ┄┄┄┄┄┄┄┄┄┄┄┄┄┄⟡`))
-if (options.fromCommand) originalM?.chat ? await conn.sendMessage(`${path.basename(pathYukiJadiBot)}@s.whatsapp.net`, {text : '*CONEXIÓN PÉRDIDA*\n\n> *INTENTÉ MANUALMENTE VOLVER A SER SUB-BOT*' }, { quoted: originalM || null }) : "" // Use originalM here
+if (options.fromCommand) originalChat ? await conn.sendMessage(`${path.basename(pathYukiJadiBot)}@s.whatsapp.net`, {text : '*CONEXIÓN PÉRDIDA*\n\n> *INTENTÉ MANUALMENTE VOLVER A SER SUB-BOT*' }, { quoted: m || null }) : "" // Use originalChat
 return creloadHandler(true).catch(console.error)
 }
 if (reason === 515) {
@@ -227,11 +227,15 @@ sock.isInit = true
 global.conns.push(sock)
 await joinChannels(sock)
 
-// Send the connection message using the stored `originalM`
-if (originalM?.chat) {
-await originalM.reply(args[0] ? `@${originalM.sender.split('@')[0]}, ya estás conectado, leyendo mensajes entrantes...` : `✿ @${originalM.sender.split('@')[0]}, Genial ya eres parte de la familia *Yuru-SubBots.*`)
+// Explicitly use the main bot's 'conn' to send the message to the original chat
+if (originalChat) {
+    await conn.sendMessage(originalChat, {
+        text: args[0] ? `@${originalSender.split('@')[0]}, ya estás conectado, leyendo mensajes entrantes...` : `✿ @${originalSender.split('@')[0]}, Genial ya eres parte de la familia *Yuru-SubBots.*`,
+        mentions: [originalSender]
+    }, { quoted: m }); // Quote the original message 'm'
 }
-}
+
+}}
 setInterval(async () => {
 if (!sock.user) {
 try { sock.ws.close() } catch (e) {
