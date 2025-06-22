@@ -4,7 +4,7 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
   if (!text) return m.reply(`🤖 *Adonix IA* 🤖\n\nUsa:\n${usedPrefix + command} [tu pregunta]\n\nEjemplo:\n${usedPrefix + command} haz un código JS que sume dos números`);
 
   try {
-    await m.react('🧠');
+    await m.react('🕒');
 
     const url = `https://theadonix-api.vercel.app/api/adonix?q=${encodeURIComponent(text)}`;
     const res = await fetch(url);
@@ -16,7 +16,7 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
     }
 
     // Manda la respuesta formateada bien chida
-    await m.reply(`🤖 *Adonix IA responde:*\n\n${data.respuesta}`);
+    await m.reply(`🌵 *Adonix IA :*\n\n${data.respuesta}`);
 
     await m.react('✅');
 
