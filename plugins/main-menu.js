@@ -39,10 +39,8 @@ let handler = async (m, { conn, args }) => {
 │❀ *Comandos* : ${totalCommands}
 │★ *País* : ${mundo}
 │❐ *Baileys* : Multi Device
-╰─────────────────
-
-*⦉✧⦊ ᴄʜᴀɴɴᴇʟ :* https://whatsapp.com/channel/0029Vb5UfTC4CrfeKSamhp1f
-
+│*✧ ᴄʜᴀɴɴᴇʟ :* https://whatsapp.com/channel/0029Vb5pM031CYoMvQi2I02D
+╰────────────────
 »  ⊹ ˚୨ •(=^●ω●^=)•  *Info-Bot* ⊹
 > ✐ Comandos para ver el estado e información de la Bot.
 
@@ -52,7 +50,7 @@ let handler = async (m, { conn, args }) => {
 → Ver tiempo activo o en linea de la Bot.
 ✦ *#qr • #code*
 → Crea una sesión de Sub-Bot.
-✦ *#bots • #sockets*
+https://whatsapp.com/channel/0029Vb5pM031CYoMvQi2I02✦ *#bots • #sockets*
 → Ver la lista de Sub-Bots activos.
 ✦ *#creador*
 → Contacto del creador de la Bot.
