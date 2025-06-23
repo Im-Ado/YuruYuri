@@ -1,8 +1,8 @@
 import fetch from 'node-fetch'
-import { writeFileSync, unlinkSync } from 'fs'
+import { writeFileSync, unlinkSync, readFileSync } from 'fs'
 import path from 'path'
 
-const handler = async (m, { args, text, conn }) => {
+const handler = async (m, { text, conn }) => {
   if (!text) {
     return conn.reply(
       m.chat,
@@ -21,7 +21,7 @@ const handler = async (m, { args, text, conn }) => {
     `╭─〔 📡 SOLICITANDO DATOS... 〕─╮
 ┃⏳ Procesando la extracción del código HTML...
 ┃🔍 Analizando el sitio web solicitado...
-╰───────────────────────╯`,
+╰────────────────────────────╯`,
     m
   )
 
@@ -36,16 +36,18 @@ const handler = async (m, { args, text, conn }) => {
 
     writeFileSync(filepath, data.html)
 
+    const fileBuffer = readFileSync(filepath)
+
     await conn.sendMessage(
       m.chat,
       {
-        document: { url: filepath },
+        document: fileBuffer,
         mimetype: 'text/html',
         fileName: 'hanako-html-source.html',
         caption: `
 ╭─〔 📄 HTML EXTRAÍDO 〕─╮
 ┃✅ El código HTML se ha extraído exitosamente.
-┃🌵 *Servidor:* Adonix API
+┃✨ Procesado por: *Adonix APi*
 ╰─────────────────────╯
 🔗 URL solicitada: ${url}
 `.trim(),
