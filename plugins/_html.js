@@ -1,46 +1,74 @@
 import fetch from 'node-fetch'
+import { writeFileSync, unlinkSync } from 'fs'
+import path from 'path'
 
-let handler = async (m, { conn, args, usedPrefix, command }) => {
-  if (!args[0]) {
-    return m.reply(`🔍 *Uso del comando:*\n\n${usedPrefix + command} https://ejemplo.com`)
+const handler = async (m, { args, text, conn }) => {
+  if (!text) {
+    return conn.reply(
+      m.chat,
+      `✘ 「 ENLACE FALTANTE 」
+➤ Por favor proporciona una URL válida.
+➤ Ejemplo de uso: *html https://example.com*`,
+      m
+    )
   }
 
-  const url = args[0]
-  if (!/^https?:\/\//i.test(url)) {
-    return m.reply('❌ Esa no es una URL válida. Asegúrate de poner el http:// o https:// wey')
-  }
+  const url = text.trim()
+  const api = `https://theadonix-api.vercel.app/api/Extract?url=${encodeURIComponent(url)}`
+
+  await conn.reply(
+    m.chat,
+    `╭─〔 📡 SOLICITANDO DATOS... 〕─╮
+┃⏳ Procesando la extracción del código HTML...
+┃🔍 Analizando el sitio web solicitado...
+╰───────────────────────╯`,
+    m
+  )
 
   try {
-    await m.react('⏳')
-
-    const apiURL = `https://theadonix-api.vercel.app/api/Extract?url=${encodeURIComponent(url)}`
-    const res = await fetch(apiURL)
+    const res = await fetch(api)
     const data = await res.json()
 
-    if (!data || !data.html) {
-      await m.react('❌')
-      return m.reply('❌ No se pudo extraer el HTML, intenta con otra página.')
-    }
+    if (!data.status || !data.html) throw new Error('Respuesta no válida')
 
-    const htmlText = data.html.length > 3500
-      ? data.html.slice(0, 3500) + "\n\n... (se cortó por longitud, fue muy largo pa' WhatsApp)"
-      : data.html
+    const filename = `hanako-html-${Date.now()}.html`
+    const filepath = path.join('./temp', filename)
 
-    await conn.sendMessage(m.chat, {
-      text: `📄 *Código HTML extraído:*\n\n${htmlText}`,
-    }, { quoted: m })
+    writeFileSync(filepath, data.html)
 
-    await m.react('✅')
+    await conn.sendMessage(
+      m.chat,
+      {
+        document: { url: filepath },
+        mimetype: 'text/html',
+        fileName: 'hanako-html-source.html',
+        caption: `
+╭─〔 📄 HTML EXTRAÍDO 〕─╮
+┃✅ El código HTML se ha extraído exitosamente.
+┃🌵 *Servidor:* Adonix API
+╰─────────────────────╯
+🔗 URL solicitada: ${url}
+`.trim(),
+      },
+      { quoted: m }
+    )
 
-  } catch (e) {
-    console.error(e)
-    await m.react('❌')
-    m.reply(`💥 Ocurrió un error al extraer el HTML:\n${e.message}`)
+    unlinkSync(filepath)
+  } catch (err) {
+    console.error('[ERROR en html extract]', err)
+    conn.reply(
+      m.chat,
+      `✘ 「 ERROR AL EXTRAER 」
+➤ No se pudo obtener el contenido HTML.
+➤ Asegúrate de que el enlace sea válido y accesible.`,
+      m
+    )
   }
 }
 
-handler.command = ['extractor', 'html']
-handler.help = ['extractor <url>']
+handler.command = ['html']
+handler.help = ['html <enlace>']
 handler.tags = ['tools']
+handler.register = true
 
 export default handler
