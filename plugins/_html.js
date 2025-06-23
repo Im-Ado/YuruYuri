@@ -43,8 +43,8 @@ const handler = async (m, { text, conn }) => {
       throw new Error(`⚠️ ${data.mensaje || 'La API rechazó la URL proporcionada.'}`)
     }
 
-    const filename = `hanako-html-${Date.now()}.html`
-    const filepath = path.join('./temp', filename)
+    const filename = `Adonix-html-${Date.now()}.html`
+    const filepath = path.join('./tmp', filename)
     writeFileSync(filepath, data.html)
 
     const fileBuffer = readFileSync(filepath)
@@ -58,7 +58,7 @@ const handler = async (m, { text, conn }) => {
         caption: `
 ╭─〔 📄 HTML EXTRAÍDO 〕─╮
 ┃✅ ${data.mensaje || 'Código HTML obtenido exitosamente.'}
-┃✨ Procesado por: *Hanako-kun*
+┃✨ Procesado por: *Adonix API*
 ╰───────────────────────╯
 🔗 URL: ${url}
 `.trim(),
