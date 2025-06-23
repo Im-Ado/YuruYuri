@@ -39,7 +39,7 @@ let handler = async (m, { conn, args }) => {
 │❀ *Comandos* : ${totalCommands}
 │★ *País* : ${mundo}
 │❐ *Baileys* : Multi Device
-│*✧ ᴄʜᴀɴɴᴇʟ :* https://whatsapp.com/channel/0029Vb5pM031CYoMvQi2I02D
+│✧ *Canal* : https://whatsapp.com/channel/0029Vb5pM031CYoMvQi2I02D
 ╰────────────────
 »  ⊹ ˚୨ •(=^●ω●^=)•  *Info-Bot* ⊹
 > ✐ Comandos para ver el estado e información de la Bot.
