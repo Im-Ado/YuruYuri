@@ -18,22 +18,33 @@ const handler = async (m, { text, conn }) => {
 
   await conn.reply(
     m.chat,
-    `╭─〔 📡 SOLICITANDO DATOS... 〕─╮
-┃⏳ Procesando la extracción del código HTML...
-┃🔍 Analizando el sitio web solicitado...
+    `╭─〔 📡 EXTRAYENDO HTML... 〕─╮
+┃⏳ Procesando la solicitud...
+┃🔍 Analizando el sitio web...
 ╰────────────────────────────╯`,
     m
   )
 
   try {
     const res = await fetch(api)
+    const contentType = res.headers.get('content-type') || ''
+
+    if (!contentType.includes('application/json')) {
+      throw new Error('La API no devolvió una respuesta JSON válida.')
+    }
+
     const data = await res.json()
 
-    if (!data.status || !data.html) throw new Error('Respuesta no válida')
+    if (
+      !data.status ||
+      typeof data.html !== 'string' ||
+      data.html.trim().toLowerCase().startsWith('url is not valid')
+    ) {
+      throw new Error(`⚠️ ${data.mensaje || 'La API rechazó la URL proporcionada.'}`)
+    }
 
     const filename = `hanako-html-${Date.now()}.html`
     const filepath = path.join('./temp', filename)
-
     writeFileSync(filepath, data.html)
 
     const fileBuffer = readFileSync(filepath)
@@ -43,13 +54,13 @@ const handler = async (m, { text, conn }) => {
       {
         document: fileBuffer,
         mimetype: 'text/html',
-        fileName: 'hanako-html-source.html',
+        fileName: 'web.html',
         caption: `
 ╭─〔 📄 HTML EXTRAÍDO 〕─╮
-┃✅ El código HTML se ha extraído exitosamente.
-┃✨ Procesado por: *Adonix APi*
-╰─────────────────────╯
-🔗 URL solicitada: ${url}
+┃✅ ${data.mensaje || 'Código HTML obtenido exitosamente.'}
+┃✨ Procesado por: *Hanako-kun*
+╰───────────────────────╯
+🔗 URL: ${url}
 `.trim(),
       },
       { quoted: m }
@@ -61,8 +72,8 @@ const handler = async (m, { text, conn }) => {
     conn.reply(
       m.chat,
       `✘ 「 ERROR AL EXTRAER 」
-➤ No se pudo obtener el contenido HTML.
-➤ Asegúrate de que el enlace sea válido y accesible.`,
+➤ ${err.message || 'No se pudo obtener el contenido HTML.'}
+➤ Verifica que el enlace sea válido y accesible.`,
       m
     )
   }
