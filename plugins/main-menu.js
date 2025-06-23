@@ -50,7 +50,7 @@ let handler = async (m, { conn, args }) => {
 → Ver tiempo activo o en linea de la Bot.
 ✦ *#qr • #code*
 → Crea una sesión de Sub-Bot.
-https://whatsapp.com/channel/0029Vb5pM031CYoMvQi2I02✦ *#bots • #sockets*
+✦ *#bots • #sockets*
 → Ver la lista de Sub-Bots activos.
 ✦ *#creador*
 → Contacto del creador de la Bot.
