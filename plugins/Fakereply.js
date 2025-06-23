@@ -1,39 +1,38 @@
 import fetch from 'node-fetch'
-import fs from 'fs'
 
-const handler = async (m, { conn, args, usedPrefix, command }) => {
-  if (!args[0]) return m.reply(`🌐 *Ingresa una URL válida para extraer el HTML*\n\n📌 *Ejemplo:*\n${usedPrefix + command} https://example.com`)
-
-  const url = args[0]
-  const api = `https://delirius-apiofc.vercel.app/tools/htmlextract?url=${encodeURIComponent(url)}`
+let handler = async (m, { conn, args, text, usedPrefix, command }) => {
+  if (!text) return m.reply(`Mande el nombre o link de la canción\nEjemplo:\n${usedPrefix + command} bad bunny`)
 
   try {
-    const res = await fetch(api)
-    if (!res.ok) throw '❌ Error al obtener HTML'
+    // Mensaje que va primero con miniatura y detalles
+    let res = await fetch(`https://theadonix-api.vercel.app/api/ytmp42?query=${encodeURIComponent(text)}`)
+    let json = await res.json()
 
-    const json = await res.json()
-    const html = json.result
+    if (!json.result?.audio) return m.reply('No se pudo obtener el audio.')
 
-    const fileName = `html-${Date.now()}.html`
-    const filePath = `/tmp/${fileName}`
-    fs.writeFileSync(filePath, html)
+    let { title, url, thumbnail, duration, audio, filename } = json.result
 
     await conn.sendMessage(m.chat, {
-      document: { url: filePath },
-      mimetype: 'text/html',
-      fileName: fileName,
-      caption: `🧩 *HTML EXTRAÍDO COMPLETAMENTE*\n\n🌐 URL: ${url}\n📄 Archivo: ${fileName}\n\n${botname}`
+      image: { url: thumbnail },
+      caption: `🎶 ${title}\n⏰ Duración: ${duration}\n🔗 ${url}`
+    }, { quoted: m })
+
+    // Después manda el audio
+    await conn.sendMessage(m.chat, {
+      audio: { url: audio },
+      mimetype: 'audio/mpeg',
+      fileName: filename,
+      ptt: false
     }, { quoted: m })
 
   } catch (e) {
     console.error(e)
-    m.reply(`❌ No se pudo extraer el HTML.\n🔁 Asegúrate de que la URL esté activa y sea válida.`)
+    m.reply('Error al descargar el audio')
   }
 }
 
-handler.help = ['htmlget <url>']
-handler.tags = ['tools']
-handler.command = ['htmlget', 'gethtml', 'extrhtml']
-handler.register = true
+handler.help = ['ytmp42 <texto>']
+handler.tags = ['descargas']
+handler.command = ['play3']
 
 export default handler
