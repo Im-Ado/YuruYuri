@@ -24,7 +24,7 @@ let handler = async (m, { conn, args, usedPrefix, command }) => {
     }
 
     // Llama tu API con la url
-    let res = await fetch(`https://theadonix-api.vercel.app/api/ytmp3?url=${encodeURIComponent(url)}`);
+    let res = await fetch(`https://theadonix-api.vercel.app/api/ytmp42?url=${encodeURIComponent(url)}`);
     let data = await res.json();
 
     if (data.status !== 200 || !data.result || !data.result.audio) {
