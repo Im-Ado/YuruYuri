@@ -13,8 +13,7 @@ let HS = `*「✦」 ${grid_title}*
 
 > *✦ Creador: » ${created_at}*
 > *🜸 Link: » ${pin}*`
-await conn.sendMessage(m.chat, { image: { url: images_url }, caption: HS }, { quoted: m })
-//await conn.sendMessage(m.chat, { image: images_url, caption: HS, footer: '', buttons: [ { buttonId: `.pinterest ${text}`, buttonText: { displayText: 'Siguiente' } }, ], viewOnce: true, headerType: 4 }, { quoted: m })
+await conn.sendMessage(m.chat, { image: images_url, caption: HS, footer: '', buttons: [ { buttonId: `.pinterest ${text}`, buttonText: { displayText: 'Siguiente' } }, ], viewOnce: true, headerType: 4 }, { quoted: m })
 
 } catch (error) {
 console.error(error)
