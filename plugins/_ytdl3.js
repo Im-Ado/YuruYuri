@@ -6,6 +6,8 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
   await m.react('🕒')
 
   try {
+     // tu marca
+
     // Buscar con Delirius
     const searchRes = await fetch(`https://delirius-apiofc.vercel.app/search/ytsearch?q=${encodeURIComponent(text)}`)
     const searchData = await searchRes.json()
@@ -28,15 +30,20 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
     }
 
     const { title, video: videoLink, filename } = downloadData.result
+    const duration = video.duration || 'N/A'
+    const url = videoUrl
+
+    let caption = `*「${wm}」*\n\n` +
+      `*❒ Título:* ${title}\n` +
+      `*★ Duración:* ${duration}\n` +
+      `*✧ Link:* ${url}\n\n` +
+      `_Solicitado por ${m.pushName}_\n\n` +
+      `*❀ Servidor: Adonix API*`
 
     // Mandar mensaje con miniatura y detalles
     await conn.sendMessage(m.chat, {
       image: { url: video.thumbnail },
-      caption:
-        `🎬 *${title}*\n` +
-        `📁 Archivo: ${filename}\n` +
-        `🔗 Link: ${videoUrl}\n\n` +
-        `🌐 Descargado con Adonix API`
+      caption
     }, { quoted: m })
 
     // Mandar video
