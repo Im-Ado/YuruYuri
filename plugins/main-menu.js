@@ -583,18 +583,20 @@ let handler = async (m, { conn, args }) => {
 → Juega tres en raya.
   `.trim()
 
-  await conn.sendMessage(m.chat, { 
-    text: captionText,
+  
+  await conn.sendMessage(m.chat, {
+    image: { url: banner },
+    caption: captionText,
     contextInfo: {
       mentionedJid: [m.sender, userId],
       isForwarded: true,
+      forwardingScore: 9999,
       forwardedNewsletterMessageInfo: {
         newsletterJid: channelRD.id,
         newsletterName: channelRD.name,
         serverMessageId: -1,
       },
-      forwardingScore: 999,
-    },
+    }
   }, { quoted: m })
 }
 
