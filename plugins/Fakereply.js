@@ -1,58 +1,82 @@
 import fetch from 'node-fetch';
-import yts from 'yt-search';
 
-let handler = async (m, { conn, args, usedPrefix, command }) => {
-  if (!args.length) return m.reply(`Pon el nombre o link pa buscar\nEjemplo:\n${usedPrefix}${command} bad bunny`);
+let handler = async (m, { conn, text, usedPrefix, command }) => {
+  if (!text) return m.reply(`🌴 Pon el nombre o link pa buscar un video\nEjemplo:\n${usedPrefix + command} Prince Royce - El Clavo`);
 
   await m.react('🕒');
 
   try {
-    let query = args.join(' ');
-    let url;
+    // Busca en la API pa sacar info y link pero no manda el audio directo aún
+    const res = await fetch(`https://theadonix-api.vercel.app/api/ytmp3?query=${encodeURIComponent(text)}`);
+    const data = await res.json();
 
-    // Si es URL usa directo
-    if (/^https?:\/\//.test(query)) {
-      url = query;
-    } else {
-      // Busca con yt-search y saca el primer video
-      let search = await yts(query);
-      if (!search.videos.length) {
-        await m.react('❌');
-        return m.reply('No encontré ningún video con ese nombre.');
-      }
-      url = search.videos[0].url;
-    }
-
-    // Llama tu API con la url
-    let res = await fetch(`https://theadonix-api.vercel.app/api/ytmp42?url=${encodeURIComponent(url)}`);
-    let data = await res.json();
-
-    if (data.status !== 200 || !data.result || !data.result.audio) {
+    if (!data.result || !data.result.audio) {
       await m.react('❌');
-      return m.reply(`No pude descargar el audio.\nRespuesta API:\n${JSON.stringify(data)}`);
+      return m.reply('❌ No pude encontrar el audio. Intenta con otro nombre o link.');
     }
 
-    let { title, audio, filename, channel, nota } = data.result;
+    const { title, audio, thumbnail, filename, creator, duration, url } = data.result;
 
-    let caption = `*${title}*\n*Canal:* ${channel || 'Desconocido'}\n\n${nota || ''}\n_Solicitado por ${m.pushName}_`;
+    let caption = `*「🎵 ¡Qué buena canción wey! 🎵」*\n\n` +
+      `*🎤 Título:* ${title}\n` +
+      `*⏳ Duración:* ${duration || 'Desconocida'}\n` +
+      `*👤 Canal:* ${creator || 'Nadie sabe'}\n` +
+      `*🔗 Link:* ${url}\n\n` +
+      `_Solicitado por ${m.pushName}_\n\n` +
+      `*🌟 Servidor: Adonix API*`;
 
-    // Envía el mensaje con audio sin contextInfo
+    // Manda la info con botones pa elegir qué hacer
+    const buttons = [
+      { buttonId: `download_audio ${audio}||${filename}`, buttonText: { displayText: '🎧 Descargar Audio' }, type: 1 },
+      { buttonId: `info_audio`, buttonText: { displayText: 'ℹ️ Más info' }, type: 1 }
+    ];
+
     await conn.sendMessage(m.chat, {
-      audio: { url: audio },
-      mimetype: 'audio/mpeg',
-      fileName: filename
+      image: { url: thumbnail },
+      caption,
+      buttons,
+      footer: 'Escoge una opción wey',
+      headerType: 4
     }, { quoted: m });
 
     await m.react('✅');
 
   } catch (e) {
+    console.error(e);
     await m.react('❌');
-    m.reply(`Error pa descargar audio: ${e.message}`);
+    m.reply(`❌ Ocurrió un error wey: ${e.message}`);
   }
 };
 
-handler.help = ['play3 <nombre o url>'];
-handler.tags = ['downloader', 'audio'];
-handler.command = ['play3'];
+// Manejo de botones
+handler.button = async (m, { conn }) => {
+  const { id, from, sender } = m;
+  if (!m.text) return;
+
+  if (id.startsWith('download_audio')) {
+    // El id es: "download_audio <url>||<filename>"
+    let [_, payload] = id.split(' ');
+    let [audioUrl, filename] = payload.split('||');
+
+    await conn.sendMessage(from, {
+      audio: { url: audioUrl },
+      mimetype: 'audio/mpeg',
+      fileName: filename,
+      ptt: true
+    }, { quoted: m });
+
+    await conn.sendMessage(from, { text: '¡Audio descargado! Ahora a darle play 🎧🔥' }, { quoted: m });
+  }
+
+  if (id === 'info_audio') {
+    await conn.sendMessage(from, { text: 'Más info vendrá pronto, stay tuned 😎' }, { quoted: m });
+  }
+};
+
+handler.help = ['ytmp3 <texto o url>'];
+handler.tags = ['downloader', 'audio', 'game'];
+handler.command = ['playxd'];
+
+handler.exp = 10;
 
 export default handler;
