@@ -1,116 +1,91 @@
 import fetch from 'node-fetch';
-import { generateWAMessageFromContent } from '@whiskeysockets/baileys';
+import yts from 'yt-search';
 
 let handler = async (m, { conn, text, usedPrefix, command }) => {
-  if (!text) return m.reply(`🌴 Pon el nombre o link pa buscar un video\nEjemplo:\n${usedPrefix + command} Me comí una salchipapa`);
+  const db = conn.adonixDownloads = conn.adonixDownloads || {}
+
+  if (!text) return m.reply(`🌴 Pon el nombre o link pa buscar un video\nEjemplo:\n${usedPrefix + command} El clavo`);
 
   await m.react('🕒');
 
   try {
-    // 🔎 Buscar el video con tu API
     const res = await fetch(`https://theadonix-api.vercel.app/api/ytmp3?query=${encodeURIComponent(text)}`);
     const data = await res.json();
 
     if (!data.result || !data.result.audio) {
       await m.react('❌');
-      return m.reply('❌ No pude encontrar el audio. Prueba con otro nombre bro');
+      return m.reply('❌ No pude obtener el audio.');
     }
 
     const { title, audio, thumbnail, filename, creator, duration, url } = data.result;
 
-    let caption = `*🎶 ¡Aquí va tu rolón! 🎶*\n\n` +
-      `*🎧 Título:* ${title}\n` +
-      `*⏱️ Duración:* ${duration || 'Desconocida'}\n` +
-      `*🔗 Link:* ${url}\n\n` +
+    let caption = `*「${wm}」*\n\n` +
+      `*❒ Título:* ${title}\n` +
+      `*★ Duración:* ${duration}\n` +
+      `*✧ Link:* ${url}\n\n` +
       `_Solicitado por ${m.pushName}_\n` +
-      `*🌟 Servidor: Adonix API*`;
+      `*❀ Servidor: Adonix API*`;
 
-    // 🟢 Guardamos la URL y filename para luego
-    conn.adonixDownloads = conn.adonixDownloads || {};
-    conn.adonixDownloads[m.chat] = { audio, filename };
+    // Guardar temporalmente audio
+    db[m.sender] = { audio, filename };
 
-    // Enviamos imagen + botones reales 🧠
-    const msg = generateWAMessageFromContent(m.chat, {
-      viewOnceMessage: {
-        message: {
-          interactiveMessage: {
-            body: { text: caption },
-            footer: { text: "Selecciona una opción 🎮" },
-            header: {
-              title: title,
-              gifPlayback: false,
-              imageMessage: { url: thumbnail }
-            },
-            nativeFlowMessage: {
-              buttons: [
-                {
-                  name: 'quick_reply',
-                  buttonParamsJson: JSON.stringify({
-                    display_text: '🎧 Descargar Audio',
-                    id: `.descarga_audio`
-                  })
-                },
-                {
-                  name: 'quick_reply',
-                  buttonParamsJson: JSON.stringify({
-                    display_text: '🎨 Imagen Random IA',
-                    id: `.imagen_adonix`
-                  })
-                }
-              ]
-            }
-          }
-        }
-      }
+    await conn.sendMessage(m.chat, {
+      image: { url: thumbnail },
+      caption,
+      footer: 'Elegí qué hacer 🎮',
+      buttons: [
+        { buttonId: 'descarga_adonix_audio', buttonText: { displayText: '🎧 Descargar Audio' }, type: 1 },
+        { buttonId: 'imagen_adonix_ia', buttonText: { displayText: '🎨 Imagen IA Random' }, type: 1 }
+      ],
+      headerType: 4
     }, { quoted: m });
 
-    await conn.relayMessage(m.chat, msg.message, { messageId: msg.key.id });
-
     await m.react('✅');
+
   } catch (e) {
     console.error(e);
     await m.react('❌');
-    m.reply(`❌ Error: ${e.message}`);
+    m.reply('❌ Error: ' + e.message);
   }
 };
 
-// 🎧 Handler para botón de audio
-handler.before = async function (m, { conn, command }) {
-  if (command === 'descarga_audio') {
-    let datos = conn.adonixDownloads?.[m.chat];
-    if (!datos) return m.reply('😓 No encontré audio para descargar. Usa `.ytmp3` primero');
+handler.before = async function (m, { conn }) {
+  const db = conn.adonixDownloads = conn.adonixDownloads || {};
+
+  if (m.text === 'descarga_adonix_audio') {
+    const datos = db[m.sender];
+    if (!datos) return m.reply('🛑 Usa el comando primero para generar un audio');
 
     await conn.sendMessage(m.chat, {
       audio: { url: datos.audio },
       mimetype: 'audio/mpeg',
-      ptt: true,
-      fileName: datos.filename
+      fileName: datos.filename,
+      ptt: true
     }, { quoted: m });
 
-    return m.reply('✅ Audio enviado. Que lo disfrutes perro 🔊🎶');
+    return m.reply('✅ Ahí va el audio perro 🔊');
   }
 
-  if (command === 'imagen_adonix') {
-    // 🤖 Imagen random con Adonix IA
-    const prompts = ['perro con gafas', 'gato astronauta', 'robot en el futuro', 'niño anime triste', 'chica cyberpunk'];
-    const randomPrompt = prompts[Math.floor(Math.random() * prompts.length)];
+  if (m.text === 'imagen_adonix_ia') {
+    const prompts = ['gato hacker', 'perro en la luna', 'niña anime triste', 'robot salvando al mundo'];
+    const idea = prompts[Math.floor(Math.random() * prompts.length)];
 
-    let res = await fetch(`https://theadonix-api.vercel.app/api/adonix?q=${encodeURIComponent(randomPrompt)}`);
-    let json = await res.json();
+    const res = await fetch(`https://theadonix-api.vercel.app/api/adonix?q=${encodeURIComponent(idea)}`);
+    const data = await res.json();
 
-    if (!json.imagen_generada) return m.reply('😿 No se pudo generar la imagen IA');
+    if (!data.imagen_generada) return m.reply('😿 No se pudo generar imagen IA');
 
     await conn.sendMessage(m.chat, {
-      image: { url: json.imagen_generada },
-      caption: `🎨 *Adonix IA* te generó esto:\n📌 *Prompt:* ${randomPrompt}`
+      image: { url: data.imagen_generada },
+      caption: `🖼️ Imagen IA generada con prompt: *${idea}*`
     }, { quoted: m });
 
     return;
   }
 };
 
-handler.help = ['ytmp3'];
-handler.tags = ['downloader', 'juegos'];
-handler.command = ['play3']; // Puedes añadir más
+handler.command = ['play3'];
+handler.help = ['ytmp3 <nombre o link>'];
+handler.tags = ['downloader'];
 
 export default handler;
