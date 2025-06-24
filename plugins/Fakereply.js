@@ -1,62 +1,32 @@
 import fetch from 'node-fetch'
 
-const handler = async (m, { conn, args, text, usedPrefix, command }) => {
-  if (!text) return m.reply(
-    `⚠️ Uso correcto: ${usedPrefix + command} <nombre o link de la canción>\n` +
-    `Ejemplo:\n${usedPrefix + command} bad bunny - tití me preguntó`
-  )
+let handler = async (m, { conn, args }) => {
+  if (!args[0]) return m.reply('🎵 Pasa el link del video de YouTube')
 
-  try {
-    // Reacción rápida con sendMessage (no await pa que no frene)
-    conn.sendMessage(m.chat, { react: { text: '🔎', key: m.key } }).catch(() => {})
+  const res = await fetch(`https://api.siputzx.my.id/api/d/ytmp3?url=${encodeURIComponent(args[0])}`)
+  const json = await res.json()
 
-    // Traer info del audio
-    const response = await fetch(`https://theadonix-api.vercel.app/api/ytmp42?query=${encodeURIComponent(text)}`)
-    const data = await response.json()
+  if (!json.status) return m.reply('❌ No se pudo descargar el audio')
 
-    if (!data.result?.audio) return m.reply('❌ No encontré el audio wey, prueba otro término.')
+  let { title, url } = json.data
 
-    const { title, url, thumbnail, duration, audio, filename } = data.result
-
-    // Miniatura a buffer para contextInfo
-    const thumbBuffer = await (await fetch(thumbnail)).buffer()
-
-    // Enviar miniatura con info sin await pa no frenar
-    conn.sendMessage(m.chat, {
-      image: { url: thumbnail },
-      caption:
-        `🎶 Título: ${title}\n` +
-        `⏰ Duración: ${duration}\n` +
-        `🔗 Link: ${url}\n\n` +
-        `⚡ Descargado con la tecnología de Adonix API`
-    }, { quoted: m }).catch(() => {})
-
-    // Enviar audio en PTT y esperar para asegurar envío correcto
-    await conn.sendMessage(m.chat, {
-      audio: { url: audio },
-      mimetype: 'audio/mpeg',
-      fileName: filename,
-      ptt: true,
-      contextInfo: {
-        externalAdReply: {
-          mediaUrl: url,
-          mediaType: 2,
-          description: 'Usando Adonix API 🫆',
-          body: 'Music YT ⚔️',
-          thumbnail: thumbBuffer,
-          sourceUrl: url
-        }
+  await conn.sendMessage(m.chat, {
+    audio: { url },
+    mimetype: 'audio/mpeg',
+    ptt: true, // si querés que se escuche como nota de voz
+    fileName: `${title}.mp3`,
+    contextInfo: {
+      externalAdReply: {
+        title: title,
+        body: "Shadow Ultra Edited 💿",
+        thumbnailUrl: null, // o pon una tuya
+        mediaType: 2,
+        mediaUrl: args[0],
+        sourceUrl: args[0]
       }
-    }, { quoted: m })
-
-  } catch (error) {
-    console.error('❌ Error en play3:', error)
-    m.reply('❌ Algo salió mal wey, intenta más tarde.')
-  }
+    }
+  }, { quoted: m })
 }
 
-handler.help = ['play3 <texto>']
-handler.tags = ['descargas']
 handler.command = ['play3']
-
 export default handler
