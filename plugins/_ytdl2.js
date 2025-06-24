@@ -1,76 +1,44 @@
-import yts from "yt-search";
+import fetch from 'node-fetch'
 
-const limit = 100;
-const APIKEY = "Sylphiette's";
+let handler = async (m, { conn, text, usedPrefix, command }) => {
+  if (!text) return m.reply(`🎬 Ingresa el enlace del video de YouTube.\n\nEjemplo:\n${usedPrefix + command} https://youtu.be/tu-enlace`)
 
-const handler = async (m, { conn, text, command }) => {
-  if (!text) return m.reply("🌴 Ingresa el nombre de un video o una URL de YouTube.");
-  m.react("🌱");
+  try {
+    await m.react('⏳')
 
-  let res = await yts(text);
-  if (!res || !res.all || res.all.length === 0) {
-    return m.reply("No se encontraron resultados para tu búsqueda.");
-  }
+    // Petición a la API
+    let api = `https://theadonix-api.vercel.app/api/ytmp4?url=${encodeURIComponent(text)}`
+    let res = await fetch(api)
+    let json = await res.json()
 
-  let video = res.all[0];
-
-  const cap = `
-\`\`\`⊜─⌈ 📻 ◜YouTube Play◞ 📻 ⌋─⊜\`\`\`
-
-≡ 🌿 \`Título\` : » ${video.title}
-≡ 🌾 \`Author\` : » ${video.author.name}
-≡ 🌱 \`Duración\` : » ${video.duration.timestamp}
-≡ 🌴 \`Vistas\` : » ${video.views}
-≡ ☘️ \`URL\`      : » ${video.url}
-`;
-
-  await conn.sendFile(m.chat, await (await fetch(video.thumbnail)).buffer(), "image.jpg", cap, m);
-
-  const urlAudio = `https://api.sylphy.xyz/download/ytmp3?url=${encodeURIComponent(video.url)}&apikey=${APIKEY}`;
-  const urlVideo = `https://api.sylphy.xyz/download/ytmp4?url=${encodeURIComponent(video.url)}&apikey=${APIKEY}`;
-
-  if (command === "play") {
-    try {
-      let resApi = await fetch(urlAudio);
-      let json = await resApi.json();
-      if (!json.status) return m.reply("No se pudo obtener el audio del video.");
-
-      let audioUrl = json.res.downloadURL;
-      let title = json.res.title || "audio.mp3";
-
-      await conn.sendFile(m.chat, audioUrl, title + ".mp3", "", m);
-      await m.react("✔️");
-    } catch (error) {
-      return m.reply("Error al descargar audio: " + error.message);
+    if (!json?.result?.video) {
+      await m.react('❌')
+      return m.reply('❌ No se pudo obtener el video.')
     }
-  } else if (command === "play2" || command === "playvid") {
-    try {
-      let resApi = await fetch(urlVideo);
-      let json = await resApi.json();
-      if (!json.status) return m.reply("No se pudo obtener el video.");
 
-      let videoUrl = json.res.url;
-      let title = json.res.title || "video.mp4";
+    let { title, video, filename } = json.result
 
-      const resHead = await fetch(videoUrl, { method: "HEAD" });
-      const cont = resHead.headers.get("content-length");
-      const bytes = parseInt(cont, 10);
-      const sizemb = bytes / (1024 * 1024);
-      const asDocument = sizemb >= limit;
+    // Mensaje previo con miniatura (opcional, si consigues miniatura)
+    let info = `🎬 *${title}*\n\n📁 *Archivo:* ${filename}\n\n🌐 *Descargado con:* Adonix API`
+    await conn.sendMessage(m.chat, { text: info }, { quoted: m })
 
-      await conn.sendFile(m.chat, videoUrl, title + ".mp4", "", m, null, {
-        asDocument,
-        mimetype: "video/mp4",
-      });
-      await m.react("✔️");
-    } catch (error) {
-      return m.reply("Error al descargar video: " + error.message);
-    }
+    // Enviar el video
+    await conn.sendMessage(m.chat, {
+      video: { url: video },
+      fileName: filename,
+      mimetype: 'video/mp4',
+    }, { quoted: m })
+
+    await m.react('✅')
+  } catch (e) {
+    console.error(e)
+    await m.react('❌')
+    return m.reply('❌ Ocurrió un error al procesar el video.')
   }
-};
+}
 
-handler.help = ["play", "play2"];
-handler.tags = ["download"];
-handler.command = ["playvid"];
+handler.help = ['ytmp4 <url>']
+handler.tags = ['downloader']
+handler.command = ['ytmp4', 'playvideo']
 
-export default handler;
+export default handler
