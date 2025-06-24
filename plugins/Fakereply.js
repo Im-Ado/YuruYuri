@@ -2,35 +2,41 @@ import fetch from 'node-fetch';
 import yts from 'yt-search';
 
 let handler = async (m, { conn, args, usedPrefix, command }) => {
-  if (!args[0]) return m.reply(`Pon nombre o link de la canción\nEjemplo:\n${usedPrefix + command} Bad Bunny`);
+  if (!args.length) return m.reply(`Pon el nombre o link pa buscar\nEjemplo:\n${usedPrefix}${command} bad bunny`);
+
+  await m.react('🕒');
 
   try {
-    await m.react('🕒');
-
     let query = args.join(' ');
     let url;
 
-    // Si el input es URL lo usas, si no buscas con yt-search
-    if (/https?:\/\//.test(query)) {
+    // Si es URL usa directo
+    if (/^https?:\/\//.test(query)) {
       url = query;
     } else {
+      // Busca con yt-search y saca el primer video
       let search = await yts(query);
-      if (!search.videos.length) return m.reply('No encontré nada we');
+      if (!search.videos.length) {
+        await m.react('❌');
+        return m.reply('No encontré ningún video con ese nombre.');
+      }
       url = search.videos[0].url;
     }
 
-    // Llamar a tu API con url
+    // Llama tu API con la url
     let res = await fetch(`https://theadonix-api.vercel.app/api/ytmp3?url=${encodeURIComponent(url)}`);
     let data = await res.json();
 
     if (data.status !== 200 || !data.result || !data.result.audio) {
       await m.react('❌');
-      return m.reply('No pude descargar el audio');
+      return m.reply(`No pude descargar el audio.\nRespuesta API:\n${JSON.stringify(data)}`);
     }
 
-    let { title, audio, filename } = data.result;
+    let { title, audio, filename, channel, nota } = data.result;
 
-    // Enviar audio SIN contextInfo
+    let caption = `*${title}*\n*Canal:* ${channel || 'Desconocido'}\n\n${nota || ''}\n_Solicitado por ${m.pushName}_`;
+
+    // Envía el mensaje con audio sin contextInfo
     await conn.sendMessage(m.chat, {
       audio: { url: audio },
       mimetype: 'audio/mpeg',
@@ -38,14 +44,15 @@ let handler = async (m, { conn, args, usedPrefix, command }) => {
     }, { quoted: m });
 
     await m.react('✅');
+
   } catch (e) {
     await m.react('❌');
-    m.reply('Error al descargar el audio: ' + e.message);
+    m.reply(`Error pa descargar audio: ${e.message}`);
   }
 };
 
-handler.help = ['play3 <nombre o link>'];
-handler.tags = ['downloader'];
+handler.help = ['play3 <nombre o url>'];
+handler.tags = ['downloader', 'audio'];
 handler.command = ['play3'];
 
 export default handler;
