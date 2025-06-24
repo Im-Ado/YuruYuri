@@ -12,9 +12,19 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
     const res = await fetch(apiURL);
     const data = await res.json();
 
-    if (!data || !data.respuesta || typeof data.respuesta !== 'string') {
+    if (!data || typeof data.respuesta !== 'string') {
       await m.react('❌');
       return m.reply('❌ No pude obtener respuesta de Adonix IA.');
+    }
+
+    // Si la respuesta es una imagen (tu API lo devuelve en imagen_generada)
+    if (data.imagen_generada) {
+      await conn.sendMessage(m.chat, {
+        image: { url: data.imagen_generada },
+        caption: `🖼️ *Adonix IA* generó esta imagen basada en:\n\n📌 _${text}_\n\n✨ Powered by Adonix`,
+      }, { quoted: m });
+      await m.react('✅');
+      return;
     }
 
     // Separar código si lo hay
