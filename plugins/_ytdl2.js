@@ -1,56 +1,45 @@
 import fetch from 'node-fetch'
 
 let handler = async (m, { conn, text, usedPrefix, command }) => {
-  if (!text) return m.reply(`🔍 Escribe el nombre o URL de un video.\n\n📌 Ejemplo:\n${usedPrefix + command} Bad Bunny Yonaguni`)
+  if (!text) return m.reply(`🔍 Dame el nombre o link de YouTube:\n\nEjemplo:\n${usedPrefix + command} Shape of You`)
+
+  await m.react('🎬')
 
   try {
-    await m.react('🎬')
-
-    // Ver si es un enlace directo de YouTube
-    let isYTLink = /(youtube\.com|youtu\.be)/i.test(text)
+    // 1️⃣ Si no es URL, busca con Delirius
     let videoUrl = text
-
-    // Si no es link, buscar con Delirius API (ytsearch)
-    if (!isYTLink) {
-      const searchAPI = `https://delirius-apiofc.vercel.app/search/ytsearch?q=${encodeURIComponent(text)}`
-      const res = await fetch(searchAPI)
-      const json = await res.json()
-
-      if (!json.status || !json.data || !json.data[0]) {
+    if (!/(youtube\.com|youtu\.be)/i.test(text)) {
+      const sr = await fetch(`https://delirius-apiofc.vercel.app/search/ytsearch?q=${encodeURIComponent(text)}`)
+      const si = await sr.json()
+      if (!si.status || !si.data?.[0]) {
         await m.react('❌')
-        return m.reply('❌ No se encontró ningún video con ese nombre.')
+        return m.reply('❌ No encontré ningún video con ese término.')
       }
-
-      const videoId = json.data[0].videoId
-      videoUrl = `https://youtube.com/watch?v=${videoId}`
+      videoUrl = `https://youtube.com/watch?v=${si.data[0].videoId}`
     }
 
-    // Descargar video con tu API
-    const api = `https://theadonix-api.vercel.app/api/ytmp4?url=${encodeURIComponent(videoUrl)}`
-    const r = await fetch(api)
-    const data = await r.json()
-
-    if (!data?.result?.video) {
+    // 2️⃣ Pide descarga al API de Adonix
+    const resp = await fetch(`https://theadonix-api.vercel.app/api/ytmp4?url=${encodeURIComponent(videoUrl)}`)
+    const j = await resp.json()
+    if (!j.result || !j.result.video) {
+      console.error('🔴 API respondió error o sin video:', j)
       await m.react('❌')
       return m.reply('❌ No se pudo descargar el video.')
     }
 
-    const { title, video, thumbnail, filename, duration, url } = data.result
+    const { title, video, thumbnail, filename, duration, url } = j.result
 
-    const caption = `🎞 *Descarga de Video YouTube*\n\n` +
-      `📌 *Título:* ${title}\n` +
-      `⏳ *Duración:* ${duration}\n` +
+    // 3️⃣ Mensaje con miniatura + detalles
+    const cap = `🎞 *Descarga YouTube*\n\n` +
+      `📝 *Título:* ${title}\n` +
+      `⏱ *Duración:* ${duration}\n` +
       `🔗 *Link:* ${url}\n\n` +
       `_Solicitado por ${m.pushName}_\n` +
-      `🔧 *Descargado con Adonix API*`
+      `⚙️ *Descargado con Adonix API*`
 
-    // Enviar la miniatura primero
-    await conn.sendMessage(m.chat, {
-      image: { url: thumbnail },
-      caption
-    }, { quoted: m })
+    await conn.sendMessage(m.chat, { image: { url: thumbnail }, caption: cap }, { quoted: m })
 
-    // Enviar el video
+    // 4️⃣ Envía el video
     await conn.sendMessage(m.chat, {
       video: { url: video },
       mimetype: 'video/mp4',
@@ -58,11 +47,10 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
     }, { quoted: m })
 
     await m.react('✅')
-
-  } catch (e) {
-    console.error(e)
+  } catch (err) {
+    console.error('💥 Error en handler ytmp4:', err)
     await m.react('⚠️')
-    m.reply('❌ Hubo un error al intentar descargar el video.')
+    m.reply('❌ Ocurrió un error al procesar tu petición.')
   }
 }
 
