@@ -1,49 +1,73 @@
-import fetch from 'node-fetch';
+import fetch from 'node-fetch'
 
 let handler = async (m, { conn, text, usedPrefix, command }) => {
-  if (!text) return m.reply(`🌴 Pon el nombre o link de un video para buscar.\nEjemplo:\n${usedPrefix + command} Rick Astley`);
+  if (!text) return m.reply(`🔍 Escribe el nombre o URL de un video.\n\n📌 Ejemplo:\n${usedPrefix + command} Bad Bunny Yonaguni`)
 
   try {
-    await m.react('🕒');
+    await m.react('🎬')
 
-    const res = await fetch(`https://theadonix-api.vercel.app/api/ytmp4?query=${encodeURIComponent(text)}`);
-    const data = await res.json();
+    // Ver si es un enlace directo de YouTube
+    let isYTLink = /(youtube\.com|youtu\.be)/i.test(text)
+    let videoUrl = text
 
-    if (!data.result || !data.result.video) {
-      await m.react('❌');
-      return m.reply('❌ No se pudo obtener el video.');
+    // Si no es link, buscar con Delirius API (ytsearch)
+    if (!isYTLink) {
+      const searchAPI = `https://delirius-apiofc.vercel.app/search/ytsearch?q=${encodeURIComponent(text)}`
+      const res = await fetch(searchAPI)
+      const json = await res.json()
+
+      if (!json.status || !json.data || !json.data[0]) {
+        await m.react('❌')
+        return m.reply('❌ No se encontró ningún video con ese nombre.')
+      }
+
+      const videoId = json.data[0].videoId
+      videoUrl = `https://youtube.com/watch?v=${videoId}`
     }
 
-    const { title, video, thumbnail, filename, creator, duration, url } = data.result;
+    // Descargar video con tu API
+    const api = `https://theadonix-api.vercel.app/api/ytmp4?url=${encodeURIComponent(videoUrl)}`
+    const r = await fetch(api)
+    const data = await r.json()
 
-    let caption = `*「🎬 YTMP4 - Video descargado」*\n\n` +
-      `*🎤 Título:* ${title}\n` +
-      `*⏳ Duración:* ${duration}\n` +
-      `*📻 Canal:* ${creator}\n` +
-      `*🔗 Link:* ${url}\n\n` +
-      `_Solicitado por ${m.pushName}_\n\n` +
-      `*🌐 Servidor: TheAdonix API*`;
+    if (!data?.result?.video) {
+      await m.react('❌')
+      return m.reply('❌ No se pudo descargar el video.')
+    }
 
-    await conn.sendMessage(m.chat, { image: { url: thumbnail }, caption }, { quoted: m });
+    const { title, video, thumbnail, filename, duration, url } = data.result
 
-    // Enviar video sin contextInfo problemático
+    const caption = `🎞 *Descarga de Video YouTube*\n\n` +
+      `📌 *Título:* ${title}\n` +
+      `⏳ *Duración:* ${duration}\n` +
+      `🔗 *Link:* ${url}\n\n` +
+      `_Solicitado por ${m.pushName}_\n` +
+      `🔧 *Descargado con Adonix API*`
+
+    // Enviar la miniatura primero
+    await conn.sendMessage(m.chat, {
+      image: { url: thumbnail },
+      caption
+    }, { quoted: m })
+
+    // Enviar el video
     await conn.sendMessage(m.chat, {
       video: { url: video },
       mimetype: 'video/mp4',
       fileName: filename
-    }, { quoted: m });
+    }, { quoted: m })
 
-    await m.react('✅');
+    await m.react('✅')
 
   } catch (e) {
-    console.error(e);
-    await m.react('❌');
-    m.reply(`❌ Ocurrió un error: ${e.message}`);
+    console.error(e)
+    await m.react('⚠️')
+    m.reply('❌ Hubo un error al intentar descargar el video.')
   }
-};
+}
 
-handler.help = ['ytmp4 <texto o url>'];
-handler.tags = ['downloader', 'video'];
-handler.command = ['ytmp4', 'playvideo'];
+handler.help = ['ytmp4 <texto o url>']
+handler.tags = ['downloader']
+handler.command = ['ytmp4', 'playvideo']
 
-export default handler;
+export default handler
