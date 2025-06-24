@@ -1,24 +1,43 @@
-import axios from 'axios'
+import axios from 'axios';
 
-let HS = async (m, { conn, text }) => {
-if (!text) return conn.reply(m.chat, `✎ Ingresa un texto para buscar en pinterest`, m)
+let handler = async (m, { conn, text, usedPrefix, command }) => {
+  if (!text) {
+    return await conn.reply(m.chat, `✎ Ingresa un texto para buscar en Pinterest\n\nEjemplo:\n${usedPrefix + command} anime aesthetic`, m);
+  }
 
-try {
-let api = await axios.get(`https://api.siputzx.my.id/api/s/pinterest?query=${text}`)
-let json = api.data
-let data = json.data[Math.floor(Math.random() * json.data.length)]
+  try {
+    let api = await axios.get(`https://api.siputzx.my.id/api/s/pinterest?query=${encodeURIComponent(text)}`);
+    let json = api.data;
 
-let { pin, created_at, images_url, grid_title } = data
-let HS = `*「✦」 ${grid_title}*
+    if (!json.data || !json.data.length) {
+      return await conn.reply(m.chat, `❌ No se encontraron resultados para *${text}*`, m);
+    }
 
-> *✦ Creador: » ${created_at}*
-> *🜸 Link: » ${pin}*`
-await conn.sendMessage(m.chat, { image: images_url, caption: HS, footer: '', buttons: [ { buttonId: `.pinterest ${text}`, buttonText: { displayText: 'Siguiente' } }, ], viewOnce: true, headerType: 4 }, { quoted: m })
+    let data = json.data[Math.floor(Math.random() * json.data.length)];
+    let { pin, created_at, images_url, grid_title } = data;
 
-} catch (error) {
-console.error(error)
-}}
+    let caption = `*「✦」 ${grid_title}*\n\n` +
+                  `> *✦ Creador:* ${created_at}\n` +
+                  `> *🜸 Link:* ${pin}`;
 
-HS.command = ['pinterest', 'pin']
+    await conn.sendMessage(m.chat, {
+      image: { url: images_url },
+      caption,
+      footer: '',
+      buttons: [
+        { buttonId: `${usedPrefix + command} ${text}`, buttonText: { displayText: '📌 Siguiente' }, type: 1 }
+      ],
+      headerType: 4
+    }, { quoted: m });
 
-export default HS
+  } catch (error) {
+    console.error(error);
+    await conn.reply(m.chat, '❌ Ocurrió un error al buscar en Pinterest.', m);
+  }
+};
+
+handler.help = ['pinterest <texto>'];
+handler.tags = ['search', 'image'];
+handler.command = ['pinterest', 'pin'];
+
+export default handler;
