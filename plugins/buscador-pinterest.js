@@ -25,7 +25,7 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
       caption,
       footer: '',
       buttons: [
-        { buttonId: `${usedPrefix + command} ${text}`, buttonText: { displayText: '📌 Siguiente' }, type: 1 }
+        { buttonId: `${usedPrefix + command} ${text}`, buttonText: { displayText: '✧ Siguiente' }, type: 1 }
       ],
       headerType: 4
     }, { quoted: m });
