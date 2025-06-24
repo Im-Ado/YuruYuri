@@ -583,29 +583,19 @@ let handler = async (m, { conn, args }) => {
 → Juega tres en raya.
   `.trim()
 
-   await conn.sendMessage(m.chat, { 
-      text: captionText,
-      contextInfo: {
-          mentionedJid: [m.sender, userId],
-          isForwarded: true,
-          forwardedNewsletterMessageInfo: {
-              newsletterJid: channelRD.id,
-              newsletterName: channelRD.name,
-              serverMessageId: -1,
-          },
-          forwardingScore: 999,
-          externalAdReply: {
-              title: botname,
-              body: textbot,
-              thumbnailUrl: banner,
-              sourceUrl: redes,
-              mediaType: 1,
-              showAdAttribution: true,
-              renderLargerThumbnail: true,
-          },
+  await conn.sendMessage(m.chat, { 
+    text: captionText,
+    contextInfo: {
+      mentionedJid: [m.sender, userId],
+      isForwarded: true,
+      forwardedNewsletterMessageInfo: {
+        newsletterJid: channelRD.id,
+        newsletterName: channelRD.name,
+        serverMessageId: -1,
       },
+      forwardingScore: 999,
+    },
   }, { quoted: m })
-
 }
 
 handler.help = ['menu']
@@ -615,8 +605,8 @@ handler.command = ['menu', 'menú', 'help']
 export default handler
 
 function clockString(ms) {
-    let seconds = Math.floor((ms / 1000) % 60)
-    let minutes = Math.floor((ms / (1000 * 60)) % 60)
-    let hours = Math.floor((ms / (1000 * 60 * 60)) % 24)
-    return `${hours}h ${minutes}m ${seconds}s`
-} 
+  let seconds = Math.floor((ms / 1000) % 60)
+  let minutes = Math.floor((ms / (1000 * 60)) % 60)
+  let hours = Math.floor((ms / (1000 * 60 * 60)) % 24)
+  return `${hours}h ${minutes}m ${seconds}s`
+}
