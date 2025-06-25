@@ -1,7 +1,6 @@
 const handler = async (m, { conn }) => {
   const canal = '120363420941524030@newsletter';
 
-  // Código que quieres enviar
   const contenido = `
 import yts from 'yt-search';
 
@@ -18,19 +17,17 @@ let handler = async (m, { conn, text }) => {
 export default handler;
 `;
 
-  // Convertimos el texto en buffer
   const buffer = Buffer.from(contenido, 'utf-8');
 
-  // Enviar como documento tipo JavaScript (permite botón "Copy")
   await conn.sendMessage(canal, {
     document: buffer,
-    mimetype: 'application/x-javascript',
+    mimetype: 'application/javascript', // 👈 cambio clave aquí
     fileName: '🌱 YouTube Play.js',
-    caption: ' code : YouTube Play\nJsh\n\n📋 Toca "Copy" para copiar el código.',
+    caption: '🌱 𝘊𝘰𝘥𝘦 : YouTube Play\n𝘴𝘺𝘭𝘱𝘩𝘪𝘦𝘵𝘵𝘦\'𝘴 | αlρнα ν1\n\n📋 Toca "Copy" si se muestra',
     fileLength: 999999999999
   });
 
-  m.reply('✅ Código enviado al canal con botón Copy');
+  m.reply('✅ Intenté enviarlo de nuevo con compatibilidad mejorada.');
 };
 
 handler.command = ['codecopy'];
