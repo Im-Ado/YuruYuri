@@ -65,7 +65,7 @@ if (command === "play" || command === "playaudio" || command === "ytmp3") {
 
 } catch (error) {
 console.error("❌ Error general:", error)
-await m.reply(❌ Hubo un error al procesar tu solicitud:\n\n${error.message})
+await m.reply("❌ Hubo un error al procesar tu solicitud:\n\n${error.message})
 await m.react("❌")
 }
 }
