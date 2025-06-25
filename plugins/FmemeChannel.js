@@ -13,27 +13,30 @@ const frases = [
 
 const canal = '120363420941524030@newsletter';
 
-const handler = async (m, { conn }) => {
-  const frase = frases[Math.floor(Math.random() * frases.length)];
+const handler = async (m, { conn, command }) => {
+  const mensajes = frases.slice(0, 10).map(f => [
+    '', // título (opcional)
+    f,  // cuerpo
+    'https://i.imgur.com/U8nD4Ka.jpg', // imagen decorativa (puedes cambiarla)
+    [], // botones secciones (no usado aquí)
+    [['📋 Copiar frase', f]], // botón para que el texto se copie
+    [], // extra
+    []  // extra
+  ]);
 
-  await conn.sendMessage(canal, {
-    text: frase,
-    footer: '✨ Toca abajo para copiar esta frase',
-    buttons: [
-      {
-        buttonId: `.`, // Puedes usar '.' o cualquier id que no ejecute otra acción
-        buttonText: { displayText: '📋 Copiar frase' },
-        type: 1
-      }
-    ],
-    headerType: 1
-  });
+  await conn.sendCarousel(
+    canal,
+    '💫 Frases motivadoras para vos',
+    'Seleccioná la que más te inspire',
+    mensajes,
+    m
+  );
 
-  await m.reply('✅ Frase motivadora enviada al canal.');
+  m.reply('✅ Frases motivadoras enviadas al canal.');
 };
 
-handler.command = ['motivarme'];
-handler.help = ['motivarme'];
+handler.command = ['motivarme2'];
+handler.help = ['motivarme2'];
 handler.tags = ['fun'];
 
 export default handler;
