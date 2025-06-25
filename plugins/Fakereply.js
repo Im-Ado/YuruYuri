@@ -11,7 +11,7 @@ const handler = async (m, { conn }) => {
 
     await conn.sendMessage('120363420941524030@newsletter', {
       image: { url: memeUrl },
-      caption: '📸 Aquí tienes tu meme de hoy ✨',
+      caption: '> ❀ *Meme destacado* ❀,
     });
 
     m.reply('✅ Meme enviado al canal.');
