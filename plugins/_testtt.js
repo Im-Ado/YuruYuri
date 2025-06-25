@@ -2,7 +2,7 @@
 import fetch from 'node-fetch';
 
 let handler = async (m, { conn, text, usedPrefix, command }) => {
-  if (!text) return m.reply(`🌸 Ingresa el enlace de un video de TikTok.\n\n📌 *Ejemplo:*\n${usedPrefix + command} https://vm.tiktok.com/xxxxxx`);
+  if (!text) return m.reply(`🌸 Ingresa el enlace de un video de TikTok.\n\n📌 *Ejemplo:*\n${usedPrefix + command} https://vm.tiktok.com/xxxxxx`, global.rcanal);
 
   try {
     await m.react('🎴');
@@ -13,7 +13,7 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
 
     if (!data?.result?.video) {
       await m.react('❌');
-      return m.reply('❌ No se pudo obtener el video.');
+      return m.reply('❌ No se pudo obtener el video.', global.rcanal);
     }
 
     const { title, author, thumbnail, duration, video, audio, likes, comments, shares, views } = data.result;
@@ -29,13 +29,15 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
 
     await conn.sendMessage(m.chat, {
       image: { url: thumbnail },
-      caption
+      caption,
+      contextInfo: global.rcanal
     }, { quoted: m });
 
     await conn.sendMessage(m.chat, {
       video: { url: video },
       mimetype: 'video/mp4',
-      fileName: `${author.username}.mp4`
+      fileName: `${author.username}.mp4`,
+      contextInfo: global.rcanal
     }, { quoted: m });
 
     await m.react('✅');
@@ -43,7 +45,7 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
   } catch (e) {
     console.error(e);
     await m.react('⚠️');
-    m.reply(`❌ Error al procesar el enlace.`);
+    m.reply(`❌ Error al procesar el enlace.`, global.rcanal);
   }
 };
 
