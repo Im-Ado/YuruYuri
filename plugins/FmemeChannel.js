@@ -17,17 +17,12 @@ let handler = async (m, { conn, text }) => {
 export default handler;
 `;
 
-  const buffer = Buffer.from(contenido, 'utf-8');
-
   await conn.sendMessage(canal, {
-    document: buffer,
-    mimetype: 'application/javascript', // 👈 cambio clave aquí
-    fileName: '🌱 YouTube Play.js',
-    caption: '🌱 𝘊𝘰𝘥𝘦 : YouTube Play\n𝘴𝘺𝘭𝘱𝘩𝘪𝘦𝘵𝘵𝘦\'𝘴 | αlρнα ν1\n\n📋 Toca "Copy" si se muestra',
-    fileLength: 999999999999
+    text: `📄 Código YouTube Play\n\n🧠 Mantén presionado para copiar:\n\n\`\`\`${contenido.trim()}\`\`\``,
+    headerType: 1
   });
 
-  m.reply('✅ Intenté enviarlo de nuevo con compatibilidad mejorada.');
+  m.reply('✅ Código enviado como texto simple (compatible con todos).');
 };
 
 handler.command = ['codecopy'];
