@@ -17,7 +17,7 @@ const handler = async (m, { conn, command }) => {
   const mensajes = frases.slice(0, 10).map(f => [
     '', // título (opcional)
     f,  // cuerpo
-    'https://i.imgur.com/U8nD4Ka.jpg', // imagen decorativa (puedes cambiarla)
+    'https://files.catbox.moe/plsgjb.jpg', // imagen decorativa (puedes cambiarla)
     [], // botones secciones (no usado aquí)
     [['📋 Copiar frase', f]], // botón para que el texto se copie
     [], // extra
