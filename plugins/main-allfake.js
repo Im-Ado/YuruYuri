@@ -109,16 +109,18 @@ global.rcanal = {
       serverMessageId: 100,
       newsletterName: channelRD.name,
     }
-
-export default handler
+  }
+}
 
 function pickRandom(list) {
-return list[Math.floor(Math.random() * list.length)]
+  return list[Math.floor(Math.random() * list.length)]
 }
 
 async function getRandomChannel() {
-let randomIndex = Math.floor(Math.random() * canalIdM.length)
-let id = canalIdM[randomIndex]
-let name = canalNombreM[randomIndex]
-return { id, name }
+  let randomIndex = Math.floor(Math.random() * canalIdM.length)
+  let id = canalIdM[randomIndex]
+  let name = canalNombreM[randomIndex]
+  return { id, name }
 }
+
+export default handler
