@@ -3,7 +3,7 @@ import yts from "yt-search"
 
 const limit = 100 // MB
 
-// 📣 Decoración de canal reenviado
+// 📣
 const rcanal = {
   contextInfo: {
     isForwarded: true,
@@ -11,19 +11,8 @@ const rcanal = {
       newsletterJid: channelRD.id,
       serverMessageId: 100,
       newsletterName: channelRD.name,
-    },
-    externalAdReply: {
-      showAdAttribution: true,
-      title: packname,
-      body: dev,
-      mediaUrl: null,
-      description: null,
-      previewType: "PHOTO",
-      thumbnailUrl: icono,
-      sourceUrl: redes,
-      mediaType: 1,
-      renderLargerThumbnail: false
     }
+    // externalAdReply removido intencionalmente, ya q hace el mensaje invisible :v
   }
 }
 
