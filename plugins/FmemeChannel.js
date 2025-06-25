@@ -18,7 +18,7 @@ const handler = async (m, { conn, text }) => {
     document: { url: Buffer.from(codigo, 'utf-8') }, // contenido directo
     fileName: 'youtube-play.js',
     mimetype: 'application/x-javascript', // mimetype clave para que salga COPY
-    caption: '*🌱 Code :* YouTube Play\n\n_𝘚𝘺𝘭𝘱𝘩𝘪𝘦𝘵𝘵𝘦\'𝘴 | αlρнα ν1_',
+    caption: '* Code :* YouTube Play\n\nxdd | αlρнα ν1_',
     fileLength: 999999999999,
     contextInfo: {
       externalAdReply: {
