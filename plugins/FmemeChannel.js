@@ -11,26 +11,25 @@ const frases = [
   '💥 Hazlo con miedo, pero hazlo.'
 ];
 
-const canalFrases = '120363420941524030@newsletter';
+const canal = '120363420941524030@newsletter';
 
 const handler = async (m, { conn }) => {
   const frase = frases[Math.floor(Math.random() * frases.length)];
 
-  await conn.sendMessage(canalFrases, {
+  await conn.sendMessage(canal, {
     text: frase,
-    footer: '✨ Toca para copiar ✨',
+    footer: '✨ Toca abajo para copiar esta frase',
     buttons: [
       {
-        quickReplyButton: {
-          displayText: '📋 Copy',
-          id: frase
-        }
+        buttonId: `.`, // Puedes usar '.' o cualquier id que no ejecute otra acción
+        buttonText: { displayText: '📋 Copiar frase' },
+        type: 1
       }
     ],
-    mentions: [],
+    headerType: 1
   });
-  
-  m.reply('✅ Frase enviada al canal motivacional.');
+
+  await m.reply('✅ Frase motivadora enviada al canal.');
 };
 
 handler.command = ['motivarme'];
