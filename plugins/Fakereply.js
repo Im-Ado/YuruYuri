@@ -1,91 +1,27 @@
-import fetch from 'node-fetch';
-import yts from 'yt-search';
+import axios from 'axios';
 
-let handler = async (m, { conn, text, usedPrefix, command }) => {
-  const db = conn.adonixDownloads = conn.adonixDownloads || {}
+const handler = async (m, { conn }) => {
+  // Función para enviar el meme
+  const sendMeme = async () => {
+    try {
+      // Llamada a la API de memes
+      const res = await axios.get('https://g-mini-ia.vercel.app/api/meme');
+      const memeUrl = res.data.url; // URL del meme
 
-  if (!text) return m.reply(`🌴 Pon el nombre o link pa buscar un video\nEjemplo:\n${usedPrefix + command} El clavo`);
-
-  await m.react('🕒');
-
-  try {
-    const res = await fetch(`https://theadonix-api.vercel.app/api/ytmp3?query=${encodeURIComponent(text)}`);
-    const data = await res.json();
-
-    if (!data.result || !data.result.audio) {
-      await m.react('❌');
-      return m.reply('❌ No pude obtener el audio.');
+      // Enviar el meme al canal
+      await conn.sendMessage('120363420941524030@newsletter', { 
+        image: { url: memeUrl }, 
+        caption: 'Aquí tienes tu meme 🐶✨'
+      });
+    } catch (error) {
+      console.error('Error al obtener el meme:', error);
     }
+  };
 
-    const { title, audio, thumbnail, filename, creator, duration, url } = data.result;
-
-    let caption = `*「${wm}」*\n\n` +
-      `*❒ Título:* ${title}\n` +
-      `*★ Duración:* ${duration}\n` +
-      `*✧ Link:* ${url}\n\n` +
-      `_Solicitado por ${m.pushName}_\n` +
-      `*❀ Servidor: Adonix API*`;
-
-    // Guardar temporalmente audio
-    db[m.sender] = { audio, filename };
-
-    await conn.sendMessage(m.chat, {
-      image: { url: thumbnail },
-      caption,
-      footer: 'Elegí qué hacer 🎮',
-      buttons: [
-        { buttonId: 'descarga_adonix_audio', buttonText: { displayText: '🎧 Descargar Audio' }, type: 1 },
-        { buttonId: 'imagen_adonix_ia', buttonText: { displayText: '🎨 Imagen IA Random' }, type: 1 }
-      ],
-      headerType: 4
-    }, { quoted: m });
-
-    await m.react('✅');
-
-  } catch (e) {
-    console.error(e);
-    await m.react('❌');
-    m.reply('❌ Error: ' + e.message);
-  }
+  // Enviar el meme cada 5 minutos
+  setInterval(sendMeme, 5 * 60 * 1000); // 5 minutos en milisegundos
 };
 
-handler.before = async function (m, { conn }) {
-  const db = conn.adonixDownloads = conn.adonixDownloads || {};
-
-  if (m.text === 'descarga_adonix_audio') {
-    const datos = db[m.sender];
-    if (!datos) return m.reply('🛑 Usa el comando primero para generar un audio');
-
-    await conn.sendMessage(m.chat, {
-      audio: { url: datos.audio },
-      mimetype: 'audio/mpeg',
-      fileName: datos.filename,
-      ptt: true
-    }, { quoted: m });
-
-    return m.reply('✅ Ahí va el audio perro 🔊');
-  }
-
-  if (m.text === 'imagen_adonix_ia') {
-    const prompts = ['gato hacker', 'perro en la luna', 'niña anime triste', 'robot salvando al mundo'];
-    const idea = prompts[Math.floor(Math.random() * prompts.length)];
-
-    const res = await fetch(`https://theadonix-api.vercel.app/api/adonix?q=${encodeURIComponent(idea)}`);
-    const data = await res.json();
-
-    if (!data.imagen_generada) return m.reply('😿 No se pudo generar imagen IA');
-
-    await conn.sendMessage(m.chat, {
-      image: { url: data.imagen_generada },
-      caption: `🖼️ Imagen IA generada con prompt: *${idea}*`
-    }, { quoted: m });
-
-    return;
-  }
-};
-
-handler.command = ['play3'];
-handler.help = ['ytmp3 <nombre o link>'];
-handler.tags = ['downloader'];
-
+// Exporte el handler
+handler.command = ['sendmeme'];
 export default handler;
