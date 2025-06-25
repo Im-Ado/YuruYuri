@@ -17,7 +17,7 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
     let { pin, created_at, images_url, grid_title } = data;
 
     let caption = `*「✦」 ${grid_title}*\n\n` +
-                  `> *✦ Creador:* ${created_at}\n` +
+                  `> *✦ Creado El:* ${created_at}\n` +
                   `> *🜸 Link:* ${pin}`;
 
     await conn.sendMessage(m.chat, {
