@@ -1,40 +1,40 @@
-import axios from 'axios';
+const frases = [
+  '🌟 Cree en ti, incluso cuando nadie más lo haga.',
+  '🚀 Cada día es una nueva oportunidad para ser mejor.',
+  '🔥 El éxito es la suma de pequeños esfuerzos repetidos cada día.',
+  '💪 No te rindas, lo mejor está por venir.',
+  '🌈 La actitud lo cambia todo.',
+  '🧠 Tu mente es poderosa, cuídala y aliméntala con cosas buenas.',
+  '⏳ No tengas miedo de empezar de nuevo, es otra oportunidad de hacerlo bien.',
+  '🏁 El primer paso no te lleva a donde quieres ir, pero te saca de donde estás.',
+  '🌻 Sé la energía que quieres atraer.',
+  '💥 Hazlo con miedo, pero hazlo.'
+];
 
-const canalMeme = '120363420941524030@newsletter';
-let intervaloMemeActivo = false;
+const canalFrases = '120363420941524030@newsletter';
 
 const handler = async (m, { conn }) => {
-  const enviarMeme = async () => {
-    try {
-      const res = await axios.get('https://g-mini-ia.vercel.app/api/meme');
-      const memeUrl = res.data.url;
-      const titulo = res.data.title || 'Meme sin título';
+  const frase = frases[Math.floor(Math.random() * frases.length)];
 
-      if (!memeUrl) return;
-
-      await conn.sendMessage(canalMeme, {
-        image: { url: memeUrl },
-        caption: `🤣 ${titulo}\n\n✨ Enviado por tu bot.`,
-      });
-
-    } catch (err) {
-      console.error('❌ Error al enviar el meme:', err);
-    }
-  };
-
-  // Enviar uno inmediatamente
-  await enviarMeme();
-  m.reply('✅ Meme enviado y comenzando autoenvío cada 8 minutos.');
-
-  // Activar intervalo si no está activo
-  if (!intervaloMemeActivo) {
-    intervaloMemeActivo = true;
-    setInterval(enviarMeme, 8 * 60 * 1000); // cada 8 minutos
-  }
+  await conn.sendMessage(canalFrases, {
+    text: frase,
+    footer: '✨ Toca para copiar ✨',
+    buttons: [
+      {
+        quickReplyButton: {
+          displayText: '📋 Copy',
+          id: frase
+        }
+      }
+    ],
+    mentions: [],
+  });
+  
+  m.reply('✅ Frase enviada al canal motivacional.');
 };
 
-handler.command = ['enviarmeme'];
-handler.help = ['enviarmeme'];
+handler.command = ['motivarme'];
+handler.help = ['motivarme'];
 handler.tags = ['fun'];
 
 export default handler;
